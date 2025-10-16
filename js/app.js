@@ -60,6 +60,9 @@ window.startEditStudentName = startEditStudentName;
 window.saveStudentNameEdit = saveStudentNameEdit;
 window.handleStudentNameKeydown = handleStudentNameKeydown;
 window.deleteApiKey = deleteApiKey;
+window.openApiKeyGuide = openApiKeyGuide;
+window.closeApiKeyGuide = closeApiKeyGuide;
+window.saveApiKeyFromGuide = saveApiKeyFromGuide;
 
 // 유틸리티 함수들도 전역으로 등록
 window.confirmAction = confirmAction;
@@ -112,6 +115,7 @@ window.renderObservationForm = renderObservationForm;
 window.renderObservationPanel = renderObservationPanel;
 window.renderSummaryPanel = renderSummaryPanel;
 window.renderSettingsModal = renderSettingsModal;
+window.renderApiKeyGuideModal = renderApiKeyGuideModal;
 window.renderModals = renderModals;
 window.attachEventListeners = attachEventListeners;
 window.openSettings = openSettings;

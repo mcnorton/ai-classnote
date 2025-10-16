@@ -133,9 +133,11 @@ async function generateSummary(studentName, observations) {
     
     // API 키 확인
     if (!getApiKey()) {
-        if (!requestApiKey()) {
-            return "API 키가 필요합니다. 설정에서 API 키를 입력해주세요.";
+        // API 키 안내 모달 표시
+        if (typeof openApiKeyGuide === 'function') {
+            openApiKeyGuide();
         }
+        throw new Error('API 키가 필요합니다. API Key를 먼저 등록해주세요.');
     }
     
     // 관찰 기록 포맷팅

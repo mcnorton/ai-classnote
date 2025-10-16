@@ -40,6 +40,12 @@ function renderHeader() {
                     </div>
                 </div>
                 <div class="flex items-center space-x-2">
+                    ${!getApiKey() ? `
+                        <a onclick="openApiKeyGuide()" class="text-sm text-blue-600 hover:text-blue-800 cursor-pointer flex items-center px-3 py-1 bg-blue-50 rounded-md hover:bg-blue-100 transition-colors no-print" title="API Key를 받아야 AI 분석을 사용할 수 있습니다">
+                            <i class="fas fa-key mr-2"></i>
+                            <span>API Key 받기</span>
+                        </a>
+                    ` : ''}
                     <button onclick="openStudentModal()" class="mobile-student-btn hidden items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors" title="학생 관리">
                         <i class="fas fa-users mr-2"></i>
                         <span class="text-sm">${primaryStudent ? primaryStudent.name : '학생 선택'}</span>
@@ -437,7 +443,13 @@ function renderSettingsModal() {
                                 <input type="text" id="teacherName" value="${appState.settings.teacherName}" class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="예: 담임교사 홍길동">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-slate-700">Gemini API 키</label>
+                                <div class="flex items-center justify-between mb-1">
+                                    <label class="block text-sm font-medium text-slate-700">Gemini API 키</label>
+                                    <a onclick="openApiKeyGuide()" class="text-xs text-blue-600 hover:text-blue-800 cursor-pointer flex items-center" title="API Key 받는 방법 보기">
+                                        <i class="fas fa-question-circle mr-1"></i>
+                                        받는 방법
+                                    </a>
+                                </div>
                                 <div class="flex gap-2">
                                     <input type="password" id="apiKey" value="${getApiKey() || ''}" class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="API 키를 입력하세요">
                                     <button onclick="toggleApiKeyVisibility()" class="mt-1 px-3 py-2 border border-slate-300 rounded-md bg-slate-50 hover:bg-slate-100 flex-shrink-0" title="표시/숨김">
@@ -615,9 +627,142 @@ function renderStudentModalItem(student) {
     `;
 }
 
+// API Key 안내 모달 렌더링
+function renderApiKeyGuideModal() {
+    return `
+        <div id="apiKeyGuideModal" class="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-[100] p-4" style="display: none;">
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+                <!-- 헤더 -->
+                <div class="p-6 border-b border-slate-200">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-xl font-bold text-slate-900">
+                            <i class="fas fa-key text-blue-600 mr-2"></i>
+                            Gemini API Key 받는 방법
+                        </h3>
+                        <button onclick="closeApiKeyGuide()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 내용 -->
+                <div class="flex-1 overflow-y-auto p-6">
+                    <div class="space-y-6">
+                        <!-- Step 1 -->
+                        <div class="flex items-start space-x-4">
+                            <div class="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">1</div>
+                            <div class="flex-1">
+                                <h4 class="font-semibold text-slate-800 mb-2">Google AI Studio 접속</h4>
+                                <p class="text-sm text-slate-600 mb-2">
+                                    아래 링크를 클릭하여 Google AI Studio에 접속하세요.
+                                </p>
+                                <a href="https://aistudio.google.com/app/apikey" target="_blank" 
+                                   class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm transition-colors">
+                                    <i class="fas fa-external-link-alt mr-2"></i>
+                                    AI Studio 열기
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- Step 2 -->
+                        <div class="flex items-start space-x-4">
+                            <div class="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">2</div>
+                            <div class="flex-1">
+                                <h4 class="font-semibold text-slate-800 mb-2">Google 계정으로 로그인</h4>
+                                <p class="text-sm text-slate-600">
+                                    Google 계정으로 로그인하세요. 계정이 없다면 새로 만들 수 있습니다.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <!-- Step 3 -->
+                        <div class="flex items-start space-x-4">
+                            <div class="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">3</div>
+                            <div class="flex-1">
+                                <h4 class="font-semibold text-slate-800 mb-2">API Key 생성</h4>
+                                <p class="text-sm text-slate-600 mb-2">
+                                    왼쪽 아래 "Get API Key" 메뉴의 "API 키 만들기" 버튼을 클릭하세요.
+                                </p>
+                                <div class="bg-yellow-50 border border-yellow-200 rounded-md p-3 text-sm text-yellow-800">
+                                    <i class="fas fa-lightbulb mr-1"></i>
+                                    <strong>팁:</strong>
+                                    <ol>
+                                        <li> 1. 키 이름 : 'ai-classnote' 입력
+                                        <li> 2. 가져온 프로젝트 : +Create a New Project 선택
+                                        <li> 3. 프로젝트 이름: 'ai-classnote' 입력
+                                        <li> 4. 키 생성 : [키 만들기] 버튼 클릭
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Step 4 -->
+                        <div class="flex items-start space-x-4">
+                            <div class="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">4</div>
+                            <div class="flex-1">
+                                <h4 class="font-semibold text-slate-800 mb-2">API Key 복사</h4>
+                                <p class="text-sm text-slate-600 mb-2">생성된 API Key를 복사하세요. (보통 "AI"로 시작하는 긴 문자열입니다)</p>
+                                <div class="bg-yellow-50 border border-yellow-200 rounded-md p-3 text-sm text-yellow-800">
+                                    <i class="fas fa-lightbulb mr-1"></i>
+                                    <strong>팁:</strong>
+                                    <ol>
+                                        <li> 1. 생성된 키 목록의 프로젝트 이름 'ai-classnote' 를 확인하세요.
+                                        <li> 2. 오른쪽 'Copy API Key' 버튼을 클릭하여 복사하세요.
+                                    </ol>
+                                </div>
+                                <div class="bg-red-50 border border-red-200 rounded-md p-3 text-sm text-red-800">
+                                    <i class="fas fa-exclamation-triangle mr-1"></i>
+                                    <strong>주의:</strong> API Key는 안전하게 보관하세요. 다른 사람과 공유하지 마세요!
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Step 5 -->
+                        <div class="flex items-start space-x-4">
+                            <div class="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">5</div>
+                            <div class="flex-1">
+                                <h4 class="font-semibold text-slate-800 mb-2">아래에 API Key 입력</h4>
+                                <p class="text-sm text-slate-600 mb-3">
+                                    복사한 API Key를 아래 입력란에 붙여넣고 저장하세요.
+                                </p>
+                                <div class="space-y-2">
+                                    <input type="text" id="apiKeyGuideInput" 
+                                           class="w-full px-4 py-3 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+                                           placeholder="AIza... 로 시작하는 API Key를 입력하세요">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 푸터 -->
+                <div class="p-6 border-t border-slate-200 bg-slate-50">
+                    <div class="flex justify-between items-center">
+                        <div class="text-sm text-slate-600">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            무료 할당량: 월 15 RPM (분당 요청 수)
+                        </div>
+                        <div class="flex space-x-3">
+                            <button onclick="closeApiKeyGuide()" 
+                                    class="px-4 py-2 border border-slate-300 rounded-md text-slate-700 bg-white hover:bg-slate-50 transition-colors">
+                                나중에
+                            </button>
+                            <button onclick="saveApiKeyFromGuide()" 
+                                    class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                                <i class="fas fa-save mr-2"></i>
+                                저장하고 시작하기
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
 // 모달 렌더링
 function renderModals() {
-    return renderSettingsModal() + renderPromptEditorModal() + renderStudentModal();
+    return renderSettingsModal() + renderPromptEditorModal() + renderStudentModal() + renderApiKeyGuideModal();
 }
 
 // 모달이 DOM에 존재하는지 확인하고 없으면 추가
@@ -647,6 +792,9 @@ function attachEventListeners() {
         }
         if (e.target.id === 'studentModal') {
             closeStudentModal();
+        }
+        if (e.target.id === 'apiKeyGuideModal') {
+            closeApiKeyGuide();
         }
     });
     
@@ -716,6 +864,81 @@ function deleteApiKey() {
 
 // 전역 window 객체에 명시적으로 할당
 window.deleteApiKey = deleteApiKey;
+
+// API Key 안내 모달 열기
+function openApiKeyGuide() {
+    // 모달이 없으면 추가
+    const app = document.getElementById('app');
+    const existingModal = document.getElementById('apiKeyGuideModal');
+    
+    if (!existingModal) {
+        app.insertAdjacentHTML('beforeend', renderApiKeyGuideModal());
+    }
+    
+    const modal = document.getElementById('apiKeyGuideModal');
+    if (modal) {
+        modal.style.display = 'flex';
+        
+        // 입력 필드에 포커스
+        setTimeout(() => {
+            const input = document.getElementById('apiKeyGuideInput');
+            if (input) {
+                input.focus();
+            }
+        }, 100);
+    }
+}
+
+// API Key 안내 모달 닫기
+function closeApiKeyGuide() {
+    const modal = document.getElementById('apiKeyGuideModal');
+    if (modal) {
+        modal.style.display = 'none';
+        
+        // 입력 필드 초기화
+        const input = document.getElementById('apiKeyGuideInput');
+        if (input) {
+            input.value = '';
+        }
+    }
+}
+
+// API Key 안내 모달에서 키 저장
+function saveApiKeyFromGuide() {
+    const input = document.getElementById('apiKeyGuideInput');
+    if (!input) {
+        showError('입력 필드를 찾을 수 없습니다.');
+        return;
+    }
+    
+    const key = input.value.trim();
+    
+    if (!key) {
+        showError('API Key를 입력해주세요.');
+        input.focus();
+        return;
+    }
+    
+    // API 키 유효성 검사
+    if (!validateApiKey(key)) {
+        showError('올바른 API Key 형식이 아닙니다. API Key는 보통 "AI"로 시작하는 30자 이상의 문자열입니다.');
+        input.focus();
+        return;
+    }
+    
+    // API 키 저장
+    setApiKey(key);
+    closeApiKeyGuide();
+    showSuccess('API Key가 저장되었습니다. 이제 AI 분석을 사용할 수 있습니다!');
+    
+    // UI 업데이트 (헤더의 링크 숨기기 위해)
+    renderApp();
+}
+
+// 전역 window 객체에 명시적으로 할당
+window.openApiKeyGuide = openApiKeyGuide;
+window.closeApiKeyGuide = closeApiKeyGuide;
+window.saveApiKeyFromGuide = saveApiKeyFromGuide;
 
 // 설정 모달 열기
 function openSettings() {
