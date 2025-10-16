@@ -9,21 +9,20 @@ let currentAbortController = null;
 // API 키 설정
 function setApiKey(key) {
     geminiApiKey = key;
-    // localStorage에 영구 저장
+    // localStorage에만 영구 저장
     if (key) {
         localStorage.setItem('gemini_api_key', key);
-        sessionStorage.setItem('gemini_api_key', key);
     } else {
         localStorage.removeItem('gemini_api_key');
-        sessionStorage.removeItem('gemini_api_key');
+        sessionStorage.removeItem('gemini_api_key'); // 혹시 있을 수 있는 세션 데이터도 정리
     }
 }
 
 // API 키 가져오기
 function getApiKey() {
     if (!geminiApiKey) {
-        // 먼저 sessionStorage에서 확인, 없으면 localStorage에서 확인
-        geminiApiKey = sessionStorage.getItem('gemini_api_key') || localStorage.getItem('gemini_api_key');
+        // localStorage에서만 가져오기
+        geminiApiKey = localStorage.getItem('gemini_api_key');
     }
     return geminiApiKey;
 }
@@ -275,10 +274,10 @@ function loadApiKeyFromEnv() {
 
 // API 설정 초기화
 function initializeApiSettings() {
-    // localStorage에서 API 키 복원 (영구 저장된 키 우선)
-    const savedKey = localStorage.getItem('gemini_api_key') || sessionStorage.getItem('gemini_api_key');
+    // localStorage에서만 API 키 복원
+    const savedKey = localStorage.getItem('gemini_api_key');
     if (savedKey) {
-        setApiKey(savedKey);
+        geminiApiKey = savedKey;
     }
     
     // 환경변수에서 로드 시도

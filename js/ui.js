@@ -438,12 +438,18 @@ function renderSettingsModal() {
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-slate-700">Gemini API 키</label>
-                                <div class="flex">
+                                <div class="flex gap-2">
                                     <input type="password" id="apiKey" value="${getApiKey() || ''}" class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="API 키를 입력하세요">
-                                    <button onclick="toggleApiKeyVisibility()" class="mt-1 ml-2 px-3 py-2 border border-slate-300 rounded-md bg-slate-50 hover:bg-slate-100" title="표시/숨김">
+                                    <button onclick="toggleApiKeyVisibility()" class="mt-1 px-3 py-2 border border-slate-300 rounded-md bg-slate-50 hover:bg-slate-100 flex-shrink-0" title="표시/숨김">
                                         <i class="fas fa-eye"></i>
                                     </button>
+                                    <button onclick="deleteApiKey()" class="mt-1 px-3 py-2 border border-red-300 rounded-md bg-red-50 hover:bg-red-100 text-red-600 flex-shrink-0" title="API 키 삭제">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
                                 </div>
+                                <p class="mt-2 text-xs text-slate-500">
+                                    💡 API 키는 브라우저에 저장됩니다. 공용 컴퓨터에서는 사용 후 [삭제] 버튼을 눌러주세요.
+                                </p>
                             </div>
                         </div>
 
@@ -686,6 +692,30 @@ function toggleApiKeyVisibility() {
 
 // 전역 window 객체에 명시적으로 할당
 window.toggleApiKeyVisibility = toggleApiKeyVisibility;
+
+// API 키 삭제
+function deleteApiKey() {
+    if (!getApiKey()) {
+        showToast('삭제할 API 키가 없습니다.', 'info');
+        return;
+    }
+    
+    if (confirmAction('저장된 API 키를 삭제하시겠습니까?\n삭제 후 다시 사용하려면 API 키를 재입력해야 합니다.')) {
+        // API 키 완전 삭제
+        setApiKey(null);
+        
+        // 입력 필드도 비우기
+        const apiKeyEl = document.getElementById('apiKey');
+        if (apiKeyEl) {
+            apiKeyEl.value = '';
+        }
+        
+        showSuccess('API 키가 삭제되었습니다.');
+    }
+}
+
+// 전역 window 객체에 명시적으로 할당
+window.deleteApiKey = deleteApiKey;
 
 // 설정 모달 열기
 function openSettings() {

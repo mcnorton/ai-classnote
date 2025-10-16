@@ -59,6 +59,7 @@ window.testApiConnectionEvent = testApiConnectionEvent;
 window.startEditStudentName = startEditStudentName;
 window.saveStudentNameEdit = saveStudentNameEdit;
 window.handleStudentNameKeydown = handleStudentNameKeydown;
+window.deleteApiKey = deleteApiKey;
 
 // 유틸리티 함수들도 전역으로 등록
 window.confirmAction = confirmAction;
