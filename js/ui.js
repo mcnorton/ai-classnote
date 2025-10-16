@@ -466,15 +466,19 @@ function renderSettingsModal() {
                         </div>
 
                         <div class="mt-6 pt-4 border-t border-slate-200">
-                            <h4 class="text-base font-bold text-slate-800 mb-3">사용자 프롬프트</h4>
+                            <h4 class="text-base font-bold text-slate-800 mb-2">AI 요약 프롬프트</h4>
+                            <p class="text-xs text-slate-500 mb-3">
+                                프롬프트는 <code class="px-1.5 py-0.5 bg-slate-100 rounded text-xs font-mono">prompt.js</code> 파일에서 관리됩니다.
+                                <br>직접 파일을 수정하거나 아래 버튼으로 편집할 수 있습니다.
+                            </p>
                             <p class="text-sm text-slate-600 mb-3">
                                 ${appState.settings.customPrompt ? 
-                                    '<span class="text-blue-600"><i class="fas fa-check-circle mr-1"></i>사용자 프롬프트 사용 중</span>' : 
-                                    '<span class="text-slate-500"><i class="fas fa-info-circle mr-1"></i>기본 프롬프트 사용 중</span>'
+                                    '<span class="text-blue-600"><i class="fas fa-check-circle mr-1"></i>사용자 커스텀 프롬프트 사용 중</span>' : 
+                                    '<span class="text-green-600"><i class="fas fa-file-code mr-1"></i>기본 프롬프트 (prompt.js) 사용 중</span>'
                                 }
                             </p>
                             <button onclick="openPromptEditor()" class="w-full inline-flex justify-center items-center rounded-md border border-blue-300 shadow-sm px-4 py-2 bg-blue-50 text-sm font-medium text-blue-700 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                <i class="fas fa-edit mr-2"></i> AI 요약 프롬프트 편집
+                                <i class="fas fa-edit mr-2"></i> 프롬프트 편집하기
                             </button>
                         </div>
 
@@ -518,7 +522,17 @@ function renderPromptEditorModal() {
                 </div>
                 
                 <div class="flex-grow overflow-y-auto p-6">
-                    <textarea id="promptEditorText" rows="20" class="w-full px-4 py-3 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm font-mono text-xs resize-none" placeholder="사용자 정의 프롬프트를 입력하세요..."></textarea>
+                    <div class="mb-3 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                        <h4 class="text-sm font-semibold text-blue-800 mb-1">
+                            <i class="fas fa-info-circle mr-1"></i> 프롬프트 관리 방법
+                        </h4>
+                        <ul class="text-xs text-blue-700 space-y-1 ml-5 list-disc">
+                            <li><strong>기본 사용:</strong> <code class="px-1 py-0.5 bg-blue-100 rounded">prompt.js</code> 파일의 기본 프롬프트가 자동으로 로드됩니다</li>
+                            <li><strong>커스텀 프롬프트:</strong> 여기서 수정하고 저장하면 사용자 커스텀 프롬프트로 적용됩니다</li>
+                            <li><strong>초기화:</strong> '초기값으로' 버튼을 누르면 편집기가 기본 프롬프트로 초기화됩니다 (저장 필요)</li>
+                        </ul>
+                    </div>
+                    <textarea id="promptEditorText" rows="18" class="w-full px-4 py-3 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm font-mono text-xs resize-none" placeholder="사용자 정의 프롬프트를 입력하세요..."></textarea>
                 </div>
                 
                 <div class="flex items-center justify-between p-6 border-t border-slate-200 bg-slate-50">
@@ -1088,7 +1102,7 @@ function ensurePromptEditorModalExists() {
 }
 
 // 프롬프트 편집기 열기
-async function openPromptEditor() {
+function openPromptEditor() {
     try {
         // 모달이 존재하지 않으면 생성
         ensurePromptEditorModalExists();
@@ -1102,21 +1116,8 @@ async function openPromptEditor() {
         }
         
         // 현재 프롬프트 값 불러오기
-        let currentPrompt = appState.settings.customPrompt || '';
-        
-        // 비어있으면 기본 프롬프트 로드
-        if (!currentPrompt) {
-            try {
-                const response = await fetch('prompt.txt');
-                if (response.ok) {
-                    currentPrompt = await response.text();
-                    currentPrompt = currentPrompt.replace(/\/\*\*[\s\S]*?\*\//g, '').trim();
-                }
-            } catch (error) {
-                console.log('기본 프롬프트 로드 실패, 내장 프롬프트 사용');
-                currentPrompt = getDefaultPromptTemplate();
-            }
-        }
+        // 사용자 프롬프트가 없으면 prompt.js의 기본 프롬프트를 초안으로 사용
+        let currentPrompt = appState.settings.customPrompt || getDefaultPromptTemplate();
         
         // 편집기에 프롬프트 설정
         textArea.value = currentPrompt;
@@ -1157,49 +1158,26 @@ function closePromptEditor() {
 }
 
 // 프롬프트 초기화 (사용자 프롬프트 삭제)
-async function loadDefaultPromptToPromptEditor() {
+function loadDefaultPromptToPromptEditor() {
     try {
-        if (confirmAction('사용자 프롬프트를 초기화하시겠습니까?\n기본 프롬프트를 사용하게 됩니다.')) {
-            // 사용자 프롬프트를 완전히 제거
-            const newSettings = {
-                ...appState.settings,
-                customPrompt: '' // 빈 문자열로 설정하여 기본 프롬프트 사용
-            };
+        const textArea = document.getElementById('promptEditorText');
+        if (!textArea) {
+            showError('프롬프트 편집기를 찾을 수 없습니다.');
+            return;
+        }
+        
+        if (confirmAction('편집기를 기본 프롬프트로 초기화하시겠습니까?\n현재 편집 중인 내용은 사라지며, 저장은 직접 하셔야 합니다.')) {
+            // prompt.js의 기본 프롬프트로 텍스트 영역 덮어쓰기
+            const defaultPrompt = getDefaultPromptTemplate();
+            textArea.value = defaultPrompt;
             
-            updateSettings(newSettings);
+            // originalPrompt를 업데이트하여 변경사항으로 인식되도록
+            promptEditorState.originalPrompt = appState.settings.customPrompt || '';
             
-            showSuccess('프롬프트가 초기화되었습니다. 기본 프롬프트를 사용합니다.');
+            showSuccess('편집기가 기본 프롬프트로 초기화되었습니다. 저장 버튼을 눌러 적용하세요.');
             
-            // 편집기만 닫기 (설정 창은 유지)
-            closePromptEditorWithoutConfirm();
-            
-            // 설정 모달이 열려있다면 내용만 업데이트
-            const settingsModal = document.getElementById('settingsModal');
-            if (settingsModal && settingsModal.style.display === 'flex') {
-                // 설정 모달을 새로 렌더링하여 상태 업데이트
-                settingsModal.remove();
-                const app = document.getElementById('app');
-                if (app) {
-                    app.insertAdjacentHTML('beforeend', renderSettingsModal());
-                    const newModal = document.getElementById('settingsModal');
-                    if (newModal) {
-                        newModal.style.display = 'flex';
-                        // 입력 필드 값 복원
-                        const appTitleEl = document.getElementById('appTitle');
-                        const classInfoEl = document.getElementById('classInfo');
-                        const teacherNameEl = document.getElementById('teacherName');
-                        const apiKeyEl = document.getElementById('apiKey');
-                        
-                        if (appTitleEl) appTitleEl.value = appState.settings.appTitle || '';
-                        if (classInfoEl) classInfoEl.value = appState.settings.classInfo || '';
-                        if (teacherNameEl) teacherNameEl.value = appState.settings.teacherName || '';
-                        if (apiKeyEl) {
-                            apiKeyEl.value = getApiKey() || '';
-                            apiKeyEl.type = 'password';
-                        }
-                    }
-                }
-            }
+            // 편집 상태 유지 - 모달을 닫지 않음
+            // 사용자가 직접 저장하거나 취소할 수 있도록 함
         }
     } catch (error) {
         console.error('프롬프트 초기화 오류:', error);

@@ -37,84 +37,45 @@ function requestApiKey() {
     return false;
 }
 
-// 프롬프트 캐시
-let promptTemplate = null;
-
-// 프롬프트 파일 로드
-async function loadPromptTemplate() {
+/**
+ * 프롬프트 템플릿 로드
+ * 
+ * 프롬프트 로드 우선순위:
+ * 1. 사용자 정의 프롬프트 (설정에서 직접 입력한 경우)
+ * 2. 기본 프롬프트 (prompt.js에서 로드)
+ * 
+ * @returns {string} 프롬프트 템플릿 문자열
+ */
+function loadPromptTemplate() {
     // 1순위: 사용자 정의 프롬프트
     if (appState.settings.customPrompt && appState.settings.customPrompt.trim()) {
         return appState.settings.customPrompt.trim();
     }
     
-    // 2순위: 캐시된 기본 프롬프트
-    if (promptTemplate) {
-        return promptTemplate;
-    }
-    
-    // 3순위: prompt.txt 파일에서 로드
-    try {
-        const response = await fetch('prompt.txt');
-        if (!response.ok) {
-            throw new Error(`프롬프트 파일 로드 실패: ${response.status}`);
-        }
-        promptTemplate = await response.text();
-        
-        // 주석 제거 (/** ... */ 형식의 주석)
-        promptTemplate = promptTemplate.replace(/\/\*\*[\s\S]*?\*\//g, '').trim();
-        
-        return promptTemplate;
-    } catch (error) {
-        console.error('프롬프트 파일 로드 중 오류:', error);
-        // 4순위: 기본 프롬프트 사용
-        return getDefaultPromptTemplate();
-    }
+    // 2순위: prompt.js의 기본 프롬프트
+    return getDefaultPromptTemplate();
 }
 
-// 기본 프롬프트 템플릿 (파일 로드 실패 시 사용)
+/**
+ * 기본 프롬프트 템플릿 가져오기
+ * prompt.js에서 정의된 기본 프롬프트를 반환합니다.
+ * 
+ * @returns {string} 기본 프롬프트 템플릿 문자열
+ */
 function getDefaultPromptTemplate() {
-    return `당신은 아동 발달에 대한 깊은 이해를 가진 숙련된 초등학교 교사입니다.
-아래는 '{{STUDENT_NAME}}' 학생의 교실 활동에 대한 관찰 기록입니다.
+    // prompt.js에서 정의된 함수 호출
+    if (typeof getDefaultPrompt === 'function') {
+        return getDefaultPrompt();
+    }
+    
+    // fallback: prompt.js가 로드되지 않은 경우
+    console.error('prompt.js가 로드되지 않았습니다!');
+    return `'{{STUDENT_NAME}}' 학생의 관찰 기록을 분석하여 요약해주세요.
 
 [관찰 기록]
 {{OBSERVATIONS}}
 
-[요구사항]
-1. 위 관찰 기록을 면밀히 분석하여 아래에 명시된 **[보고서 구조]**를 **반드시** 준수하여 요약 보고서를 작성해 주십시오.
-2. 보고서의 모든 문장은 '~임.', '~함.', '~로 보임.'과 같은 개조식으로 간결하게 끝맺어야 합니다.
-3. 존댓말('~입니다', '~합니다')은 절대 사용하지 마십시오.
-4. 보고서는 마크다운(Markdown) 형식을 사용해야 합니다.
-5. **분석적 접근**: 관찰 기록을 단순히 재서술하는 것이 아니라, 여러 기록에 나타난 행동들을 종합하여 학생의 특성과 경향성을 해석해야 합니다.
-
-[보고서 구조]
-# '{{STUDENT_NAME}}' 학생 관찰기록
-
-## I. 일반 요약
-- 학생의 전반적인 모습에 대해 2~3문장으로 핵심을 요약.
-
-## II. 세부 분석
-### 1. 행동 패턴
-- 관찰된 학생의 일관된 행동 방식이나 습관.
-### 2. 사회적 상호작용
-- 친구 및 교사와의 관계, 의사소통 방식.
-### 3. 학습 태도
-- 수업 참여도, 과제 수행, 학습에 대한 흥미나 어려움.
-### 4. 강점
-- 학생이 두드러지게 보이는 긍정적인 특성이나 능력.
-### 5. 잠재적 관심 영역
-- 추가적인 관찰이나 지도가 필요할 수 있는 부분.
-
-## III. 교과학습 발달상황
-- **중요**: 관찰 기록에 '(국어)', '(수학)' 등과 같이 괄호 안에 과목명이 명시된 경우에만 이 섹션을 작성합니다.
-- 하위 제목으로 과목명을 사용합니다. (예: ### 국어)
-- 관찰된 과목마다 누가기록이 포함되도록 자연스럽게 연결합니다.
-- 중요한 내용을 중심으로 최대 2문단으로 요약하여 작성합니다.
-- 해당하는 기록이 없으면 이 섹션은 보고서에 포함하지 않습니다.
-
-## IV. 종합의견
-- 'I, II, III'의 모든 분석 내용을 종합하여, 학생의 성장 가능성과 긍정적인 측면을 강조하는 종합적인 의견을 상세히 작성합니다.
-
-[요약 보고서 (위 구조를 엄격히 준수할 것)]`;
+위 관찰 기록을 바탕으로 학생의 특성과 발달 상황을 요약해주세요.`;
 }
 
 // API 호출 취소 함수
@@ -147,7 +108,7 @@ async function generateSummary(studentName, observations) {
         .join('\n');
 
     // 프롬프트 템플릿 로드 및 변수 치환
-    const template = await loadPromptTemplate();
+    const template = loadPromptTemplate();
     const prompt = template
         .replace(/\{\{STUDENT_NAME\}\}/g, studentName)
         .replace(/\{\{OBSERVATIONS\}\}/g, formattedObservations);

@@ -102,6 +102,7 @@ window.testApiConnection = testApiConnection;
 window.initializeApiSettings = initializeApiSettings;
 window.loadPromptTemplate = loadPromptTemplate;
 window.getDefaultPromptTemplate = getDefaultPromptTemplate;
+window.getDefaultPrompt = getDefaultPrompt; // prompt.js에서 정의
 window.cancelCurrentApiCall = cancelCurrentApiCall;
 
 // UI 함수들 전역 등록
