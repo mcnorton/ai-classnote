@@ -34,5 +34,5 @@ local-test/
 dist/
 build/
 
-# 개발용문서
+# 개발용 문서 (비공개)
 docs/
