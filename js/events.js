@@ -4,7 +4,7 @@
 function selectStudent(id) {
     // 분석 생성 중이면 확인
     if (appState.isLoadingSummary) {
-        if (confirmAction('AI 분석이 진행 중입니다.\n다른 학생을 선택하면 분석이 중단됩니다.\n계속하시겠습니까?')) {
+        if (confirmAction(getMessage('summary.cancelConfirm', { action: getMessage('summary.actions.selectStudent') }))) {
             // API 호출 취소
             cancelCurrentApiCall();
             setLoadingSummary(false);
@@ -21,7 +21,7 @@ function selectStudent(id) {
 function addTargetStudent(id) {
     // 분석 생성 중이면 확인
     if (appState.isLoadingSummary) {
-        if (confirmAction('AI 분석이 진행 중입니다.\n학생을 추가하면 분석이 중단됩니다.\n계속하시겠습니까?')) {
+        if (confirmAction(getMessage('summary.cancelConfirm', { action: getMessage('summary.actions.addStudent') }))) {
             // API 호출 취소
             cancelCurrentApiCall();
             setLoadingSummary(false);
@@ -47,7 +47,7 @@ function addTargetStudent(id) {
 function removeTargetStudent(id) {
     // 분석 생성 중이면 확인
     if (appState.isLoadingSummary) {
-        if (confirmAction('AI 분석이 진행 중입니다.\n학생을 제거하면 분석이 중단됩니다.\n계속하시겠습니까?')) {
+        if (confirmAction(getMessage('summary.cancelConfirm', { action: getMessage('summary.actions.removeStudent') }))) {
             // API 호출 취소
             cancelCurrentApiCall();
             setLoadingSummary(false);
@@ -71,7 +71,7 @@ function removeTargetStudent(id) {
 function setViewMode(mode) {
     // 분석 생성 중이면 확인
     if (appState.isLoadingSummary) {
-        if (confirmAction('AI 분석이 진행 중입니다.\n뷰 모드를 변경하면 분석이 중단됩니다.\n계속하시겠습니까?')) {
+        if (confirmAction(getMessage('summary.cancelConfirm', { action: getMessage('summary.actions.changeViewMode') }))) {
             // API 호출 취소
             cancelCurrentApiCall();
             setLoadingSummary(false);
@@ -169,7 +169,7 @@ function handleAddObservation() {
         const dateEl = document.getElementById('observationDate');
         
         if (!textEl || !dateEl) {
-            showError('관찰 기록 폼을 찾을 수 없습니다. 페이지를 새로고침해주세요.');
+            showError(getMessage('observation.formNotFound'));
             return;
         }
         
@@ -177,13 +177,13 @@ function handleAddObservation() {
         const date = dateEl.value;
         
         if (isEmpty(text)) {
-            showError('관찰 내용을 입력해주세요.');
+            showError(getMessage('observation.contentRequired'));
             textEl.focus();
             return;
         }
         
         if (appState.selectedStudentIds.length === 0) {
-            showError('관찰 대상 학생을 선택해주세요.');
+            showError(getMessage('observation.targetRequired'));
             return;
         }
 
@@ -197,7 +197,7 @@ function handleAddObservation() {
         renderApp();
     } catch (error) {
         console.error('관찰 기록 추가 중 오류:', error);
-        showError('관찰 기록 추가 중 오류가 발생했습니다.');
+        showError(getMessage('observation.addError'));
     }
 }
 
@@ -208,7 +208,7 @@ function startEditObservation(studentId, observationId) {
         const actionsEl = document.getElementById(`obs-actions-${observationId}`);
         
         if (!inputEl || !actionsEl) {
-            showError('관찰 기록을 찾을 수 없습니다.');
+            showError(getMessage('observation.notFound'));
             return;
         }
         
@@ -222,14 +222,14 @@ function startEditObservation(studentId, observationId) {
             <button 
                 onclick="saveEditObservation('${studentId}', '${observationId}')" 
                 class="text-green-600 hover:text-green-800 text-xs px-3 py-1 rounded bg-green-50 hover:bg-green-100 transition-colors font-medium"
-                title="저장"
+                title="${getMessage('ui.observation.saveButton')}"
             >
-                <i class="fas fa-save mr-1"></i>저장
+                <i class="fas fa-save mr-1"></i>${getMessage('ui.observation.saveButton')}
             </button>
         `;
     } catch (error) {
         console.error('관찰 기록 수정 시작 중 오류:', error);
-        showError('관찰 기록 수정 시작 중 오류가 발생했습니다.');
+        showError(getMessage('observation.editStartError'));
     }
 }
 
@@ -239,14 +239,14 @@ function saveEditObservation(studentId, observationId) {
         const inputEl = document.getElementById(`obs-text-${observationId}`);
         
         if (!inputEl) {
-            showError('관찰 기록을 찾을 수 없습니다.');
+            showError(getMessage('observation.notFound'));
             return;
         }
         
         const newText = inputEl.value.trim();
         
         if (isEmpty(newText)) {
-            showError('관찰 내용은 비어있을 수 없습니다.');
+            showError(getMessage('observation.contentEmpty'));
             return;
         }
         
@@ -257,14 +257,14 @@ function saveEditObservation(studentId, observationId) {
         renderApp();
     } catch (error) {
         console.error('관찰 기록 저장 중 오류:', error);
-        showError('관찰 기록 저장 중 오류가 발생했습니다.');
+        showError(getMessage('observation.saveError'));
     }
 }
 
 // 관찰 기록 삭제
 function deleteObservationEvent(studentId, observationId) {
     try {
-        if (!confirmAction('이 관찰 기록을 삭제하시겠습니까?\n삭제된 기록은 복구할 수 없습니다.')) {
+        if (!confirmAction(getMessage('observation.deleteConfirm'))) {
             return;
         }
         
@@ -275,7 +275,7 @@ function deleteObservationEvent(studentId, observationId) {
         renderApp();
     } catch (error) {
         console.error('관찰 기록 삭제 중 오류:', error);
-        showError('관찰 기록 삭제 중 오류가 발생했습니다.');
+        showError(getMessage('observation.deleteError'));
     }
 }
 
@@ -284,13 +284,13 @@ async function generateSummaryEvent() {
     try {
         const primaryStudent = getPrimaryStudent();
         if (!primaryStudent) {
-            showError('학생을 선택해주세요.');
+            showError(getMessage('student.selectStudent'));
             return;
         }
         
         const studentObservations = appState.studentData[primaryStudent.id]?.observations || [];
         if (studentObservations.length === 0) {
-            showError('관찰 기록이 없습니다. 먼저 관찰 기록을 추가해주세요.');
+            showError(getMessage('observation.noRecords'));
             return;
         }
         
@@ -301,15 +301,15 @@ async function generateSummaryEvent() {
         const generationTimestamp = new Date().toISOString();
         updateSummary(primaryStudent.id, result, generationTimestamp);
         recordApiCall();
-        showSuccess('AI 요약이 생성되었습니다.');
+        showSuccess(getMessage('summary.generated'));
     } catch (error) {
         console.error('요약 생성 중 오류:', error);
         
         // 사용자가 취소한 경우
         if (error.message === 'CANCELLED') {
-            showToast('AI 분석이 취소되었습니다.', 'info');
+            showToast(getMessage('summary.cancelled'), 'info');
         } else {
-            showError('요약 생성 중 오류가 발생했습니다: ' + error.message);
+            showError(getMessage('summary.error') + ': ' + error.message);
         }
     } finally {
         setLoadingSummary(false);
@@ -347,14 +347,14 @@ function saveStudentNameEdit(studentId) {
     if (!newName) {
         inputElement.value = originalName;
         inputElement.readOnly = true;
-        showError('학생 이름은 비어있을 수 없습니다.');
+        showError(getMessage('student.nameEmpty'));
         return;
     }
     
     // 이름이 변경되었는지 확인
     if (newName !== originalName) {
         // 사용자에게 확인
-        if (confirmAction(`${originalName}의 이름을 ${newName}(으)로 변경하시겠습니까?`)) {
+        if (confirmAction(getMessage('student.nameChangeConfirm', { oldName: originalName, newName }))) {
             updateStudentName(studentId, newName);
             renderApp();
         } else {
@@ -397,7 +397,7 @@ async function testApiConnectionEvent() {
         }
     } catch (error) {
         console.error('API 연결 테스트 중 오류:', error);
-        showError('API 연결 테스트 중 오류가 발생했습니다: ' + error.message);
+        showError(getMessage('apiKey.testError') + ': ' + error.message);
     }
 }
 
@@ -483,10 +483,10 @@ function handleDrop(e) {
                     renderApp();
                 }
             }).catch(error => {
-                showError('파일을 읽는 중 오류가 발생했습니다: ' + error.message);
+                showError(getMessage('file.readError') + ': ' + error.message);
             });
         } else {
-            showError('JSON 파일만 가져올 수 있습니다.');
+            showError(getMessage('file.jsonOnly'));
         }
     }
 }

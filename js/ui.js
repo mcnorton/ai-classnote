@@ -41,19 +41,19 @@ function renderHeader() {
                 </div>
                 <div class="flex items-center space-x-2">
                     ${!getApiKey() ? `
-                        <a onclick="openApiKeyGuide()" class="text-sm text-blue-600 hover:text-blue-800 cursor-pointer flex items-center px-3 py-1 bg-blue-50 rounded-md hover:bg-blue-100 transition-colors no-print" title="API Key를 받아야 AI 분석을 사용할 수 있습니다">
+                        <a onclick="openApiKeyGuide()" class="text-sm text-blue-600 hover:text-blue-800 cursor-pointer flex items-center px-3 py-1 bg-blue-50 rounded-md hover:bg-blue-100 transition-colors no-print" title="${getMessage('ui.header.getApiKeyTooltip')}">
                             <i class="fas fa-key mr-2"></i>
-                            <span>API Key 받기</span>
+                            <span>${getMessage('ui.header.getApiKey')}</span>
                         </a>
                     ` : ''}
-                    <button onclick="openStudentModal()" class="mobile-student-btn hidden items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors" title="학생 관리">
+                    <button onclick="openStudentModal()" class="mobile-student-btn hidden items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors" title="${getMessage('ui.header.studentManagement')}">
                         <i class="fas fa-users mr-2"></i>
-                        <span class="text-sm">${primaryStudent ? primaryStudent.name : '학생 선택'}</span>
+                        <span class="text-sm">${primaryStudent ? primaryStudent.name : getMessage('ui.header.selectStudent')}</span>
                     </button>
-                    <button onclick="openSettings()" class="text-slate-500 hover:text-blue-600 transition-colors p-2 rounded-full hover:bg-slate-100 no-print" title="설정">
+                    <button onclick="openSettings()" class="text-slate-500 hover:text-blue-600 transition-colors p-2 rounded-full hover:bg-slate-100 no-print" title="${getMessage('ui.header.settings')}">
                         <i class="fas fa-cog text-xl"></i>
                     </button>
-                    <button onclick="testApiConnectionEvent()" class="text-slate-500 hover:text-green-600 transition-colors p-2 rounded-full hover:bg-slate-100 no-print" title="API 연결 테스트">
+                    <button onclick="testApiConnectionEvent()" class="text-slate-500 hover:text-green-600 transition-colors p-2 rounded-full hover:bg-slate-100 no-print" title="${getMessage('ui.header.testApi')}">
                         <i class="fas fa-wifi text-xl"></i>
                     </button>
                 </div>
@@ -71,13 +71,13 @@ function renderSidebar() {
     return `
         <aside class="w-72 flex-shrink-0 bg-white h-full border-r border-slate-200 flex flex-col no-print">
             <div class="p-4 border-b border-slate-200">
-                <h2 class="text-lg font-semibold text-slate-700 mb-3">학생 관리</h2>
+                <h2 class="text-lg font-semibold text-slate-700 mb-3">${getMessage('ui.sidebar.title')}</h2>
                 <div class="flex border-b border-gray-200">
                     <button onclick="setViewMode('active')" class="flex-1 py-2 text-sm font-medium ${appState.viewMode === 'active' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-slate-500 hover:bg-slate-100'}">
-                        현재 학생 (${activeStudents.length})
+                        ${getMessage('ui.sidebar.activeStudents', { count: activeStudents.length })}
                     </button>
                     <button onclick="setViewMode('deleted')" class="flex-1 py-2 text-sm font-medium ${appState.viewMode === 'deleted' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-slate-500 hover:bg-slate-100'}">
-                        삭제된 학생 (${deletedStudents.length})
+                        ${getMessage('ui.sidebar.deletedStudents', { count: deletedStudents.length })}
                     </button>
                 </div>
             </div>
@@ -85,8 +85,8 @@ function renderSidebar() {
                  ${studentsToDisplay.length === 0 ? `
                      <div class="p-4 text-center text-slate-500 pt-10">
                          ${appState.viewMode === 'active' ? 
-                             '<div class="space-y-2"><p class="text-lg font-medium">학생이 없습니다</p><p class="text-sm">아래 버튼을 눌러 첫 번째 학생을 추가하세요.</p></div>' : 
-                             '<div class="space-y-2"><p class="text-lg font-medium">삭제된 학생이 없습니다</p><p class="text-sm">현재 학생 목록에서 학생을 삭제하면 여기에 표시됩니다.</p></div>'
+                             `<div class="space-y-2"><p class="text-lg font-medium">${getMessage('ui.sidebar.noStudents')}</p><p class="text-sm">${getMessage('ui.sidebar.noStudentsDesc')}</p></div>` : 
+                             `<div class="space-y-2"><p class="text-lg font-medium">${getMessage('ui.sidebar.noDeletedStudents')}</p><p class="text-sm">${getMessage('ui.sidebar.noDeletedStudentsDesc')}</p></div>`
                          }
                      </div>
                  ` : `
@@ -98,14 +98,14 @@ function renderSidebar() {
              ${appState.viewMode === 'active' ? `
                  <div class="p-4 border-t border-slate-200">
                      <button onclick="showAddStudentForm()" class="w-full flex items-center justify-center px-4 py-2 font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors">
-                         <i class="fas fa-plus mr-2"></i> 학생 추가하기
+                         <i class="fas fa-plus mr-2"></i> ${getMessage('ui.sidebar.addStudent')}
                      </button>
                  </div>
              ` : `
                  <div class="p-4 border-t border-slate-200 bg-slate-50">
                      <div class="text-center text-sm text-slate-600">
-                         <p class="mb-2"><i class="fas fa-info-circle mr-1"></i>삭제된 학생 관리</p>
-                         <p class="text-xs text-slate-500">복원하거나 영구 삭제할 수 있습니다</p>
+                         <p class="mb-2"><i class="fas fa-info-circle mr-1"></i>${getMessage('ui.sidebar.deletedStudentsManagement')}</p>
+                         <p class="text-xs text-slate-500">${getMessage('ui.sidebar.deletedStudentsManageDesc')}</p>
                      </div>
                  </div>
              `}
@@ -122,7 +122,7 @@ function renderStudentItem(student) {
         <li class="flex justify-between items-center text-slate-600 transition-colors duration-200 ${isSelected ? 'bg-blue-50' : 'hover:bg-blue-50'}">
             <div class="flex items-center p-3 flex-grow overflow-hidden">
                 ${appState.viewMode === 'active' && !isSelected ? `
-                    <button onclick="addTargetStudent('${student.id}')" class="mr-3 text-slate-400 hover:text-blue-600 w-6 h-6 flex items-center justify-center rounded-full hover:bg-blue-100 transition-colors flex-shrink-0" title="${student.name}님을 관찰 대상에 추가">
+                    <button onclick="addTargetStudent('${student.id}')" class="mr-3 text-slate-400 hover:text-blue-600 w-6 h-6 flex items-center justify-center rounded-full hover:bg-blue-100 transition-colors flex-shrink-0" title="${getMessage('ui.tooltips.addToTarget', { name: student.name })}">
                         <i class="fas fa-plus"></i>
                     </button>
                 ` : ''}
@@ -138,19 +138,19 @@ function renderStudentItem(student) {
                     onblur="saveStudentNameEdit('${student.id}')"
                     onkeydown="handleStudentNameKeydown(event, '${student.id}')"
                     class="cursor-pointer bg-transparent border-none outline-none px-0 flex-grow min-w-0 ${isPrimary ? 'text-blue-700 font-semibold' : ''} focus:cursor-text focus:bg-white focus:border focus:border-blue-500 focus:rounded focus:px-2"
-                    title="더블클릭하여 이름 수정"
+                    title="${getMessage('ui.tooltips.doubleClickToEdit')}"
                 />
             </div>
             <div class="space-x-3 pr-3 flex-shrink-0">
                 ${appState.viewMode === 'active' ? `
-                    <button onclick="softDeleteStudent('${student.id}')" class="text-slate-400 hover:text-red-500 opacity-50 hover:opacity-100 transition-opacity" title="삭제 목록으로 이동">
+                    <button onclick="softDeleteStudent('${student.id}')" class="text-slate-400 hover:text-red-500 opacity-50 hover:opacity-100 transition-opacity" title="${getMessage('ui.tooltips.moveToDeleted')}">
                         <i class="fas fa-trash-alt"></i>
                     </button>
                 ` : `
-                    <button onclick="restoreStudent('${student.id}')" class="text-slate-400 hover:text-green-600 opacity-50 hover:opacity-100 transition-opacity" title="복원하기">
+                    <button onclick="restoreStudent('${student.id}')" class="text-slate-400 hover:text-green-600 opacity-50 hover:opacity-100 transition-opacity" title="${getMessage('ui.tooltips.restore')}">
                         <i class="fas fa-undo"></i>
                     </button>
-                    <button onclick="permanentDeleteStudent('${student.id}')" class="text-slate-400 hover:text-red-600 opacity-50 hover:opacity-100 transition-opacity" title="영구 삭제">
+                    <button onclick="permanentDeleteStudent('${student.id}')" class="text-slate-400 hover:text-red-600 opacity-50 hover:opacity-100 transition-opacity" title="${getMessage('ui.tooltips.permanentDelete')}">
                         <i class="fas fa-eraser"></i>
                     </button>
                 `}
@@ -198,15 +198,15 @@ function renderWelcomeMessage() {
         <main class="flex-grow flex items-center justify-center h-full bg-slate-50 text-slate-500">
             <div class="text-center">
                 <i class="fas fa-user-plus text-5xl mb-4"></i>
-                <h2 class="text-2xl font-semibold">시작하기</h2>
-                <p>왼쪽 메뉴에서 학생을 추가하거나 선택하여 관찰 기록을 시작하세요.</p>
+                <h2 class="text-2xl font-semibold">${getMessage('ui.welcome.title')}</h2>
+                <p>${getMessage('ui.welcome.description')}</p>
                 <div class="mt-6 p-4 bg-blue-50 rounded-lg">
-                    <h3 class="text-lg font-semibold text-blue-800 mb-2">사용법</h3>
+                    <h3 class="text-lg font-semibold text-blue-800 mb-2">${getMessage('ui.welcome.howToUseTitle')}</h3>
                     <ol class="text-left text-sm text-blue-700 space-y-1">
-                        <li>1. "학생 추가하기" 버튼으로 학생을 등록하세요</li>
-                        <li>2. 학생을 선택하여 관찰 기록을 작성하세요</li>
-                        <li>3. "AI 요약 생성" 버튼으로 종합 분석을 받으세요</li>
-                        <li>4. 설정에서 API 키를 입력하세요</li>
+                        <li>1. ${getMessage('ui.welcome.step1')}</li>
+                        <li>2. ${getMessage('ui.welcome.step2')}</li>
+                        <li>3. ${getMessage('ui.welcome.step3')}</li>
+                        <li>4. ${getMessage('ui.welcome.step4')}</li>
                     </ol>
                 </div>
             </div>
@@ -220,20 +220,20 @@ function renderEmptyDeletedStudentsMessage() {
         <div class="flex-grow flex items-center justify-center h-full bg-slate-50 text-slate-500">
             <div class="text-center">
                 <i class="fas fa-trash-alt text-5xl mb-4 text-slate-300"></i>
-                <h2 class="text-2xl font-semibold">삭제된 학생이 없습니다</h2>
-                <p>현재 학생 목록에서 학생을 삭제하면 여기에 표시됩니다.</p>
+                <h2 class="text-2xl font-semibold">${getMessage('ui.deletedStudents.title')}</h2>
+                <p>${getMessage('ui.deletedStudents.description')}</p>
                 <div class="mt-6 p-4 bg-amber-50 rounded-lg">
-                    <h3 class="text-lg font-semibold text-amber-800 mb-2">삭제된 학생 관리</h3>
+                    <h3 class="text-lg font-semibold text-amber-800 mb-2">${getMessage('ui.deletedStudents.managementTitle')}</h3>
                     <ul class="text-left text-sm text-amber-700 space-y-1">
-                        <li>• 삭제된 학생은 복원하거나 영구 삭제할 수 있습니다</li>
-                        <li>• 복원된 학생은 현재 학생 목록으로 이동됩니다</li>
-                        <li>• 영구 삭제된 학생은 복구할 수 없습니다</li>
-                        <li>• 삭제된 학생의 관찰 기록은 조회만 가능합니다</li>
+                        <li>• ${getMessage('ui.deletedStudents.point1')}</li>
+                        <li>• ${getMessage('ui.deletedStudents.point2')}</li>
+                        <li>• ${getMessage('ui.deletedStudents.point3')}</li>
+                        <li>• ${getMessage('ui.deletedStudents.point4')}</li>
                     </ul>
                 </div>
                 <div class="mt-4">
                     <button onclick="setViewMode('active')" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
-                        <i class="fas fa-list mr-2"></i>현재 학생 목록으로
+                        <i class="fas fa-list mr-2"></i>${getMessage('ui.deletedStudents.backToActive')}
                     </button>
                 </div>
             </div>
@@ -246,8 +246,8 @@ function renderDeletedStudentWarning(student) {
     return `
         <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6 rounded-md">
             <div class="flex justify-between items-center">
-                <div><p class="font-bold">삭제된 학생</p><p>이 학생의 기록은 현재 조회만 가능합니다.</p></div>
-                <button onclick="restoreStudent('${student.id}')" class="px-4 py-2 bg-green-500 text-white text-sm font-medium rounded hover:bg-green-600">복원하기</button>
+                <div><p class="font-bold">${getMessage('ui.deletedWarning.title')}</p><p>${getMessage('ui.deletedWarning.description')}</p></div>
+                <button onclick="restoreStudent('${student.id}')" class="px-4 py-2 bg-green-500 text-white text-sm font-medium rounded hover:bg-green-600">${getMessage('ui.deletedWarning.restoreButton')}</button>
             </div>
         </div>
     `;
@@ -261,12 +261,12 @@ function renderObservationForm(primaryStudent, isDeletedStudentSelected) {
     
     return `
         <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-bold text-slate-800">${primaryStudent.name} 관찰 기록 추가</h3>
+            <h3 class="text-lg font-bold text-slate-800">${getMessage('ui.observation.formTitle', { name: primaryStudent.name })}</h3>
             <input type="date" id="observationDate" value="${savedDate}" class="p-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 no-print" ${isDeletedStudentSelected ? 'disabled' : ''}>
         </div>
         
         <div class="mb-4 no-print">
-            <label class="block text-sm font-medium text-slate-700 mb-2">관찰 대상 학생</label>
+            <label class="block text-sm font-medium text-slate-700 mb-2">${getMessage('ui.observation.targetStudents')}</label>
             <div class="flex flex-wrap gap-2 p-2 bg-slate-50 rounded-md min-h-[40px]">
                 ${appState.selectedStudentIds.map(id => {
                     const student = appState.students.find(s => s.id === id);
@@ -274,7 +274,7 @@ function renderObservationForm(primaryStudent, isDeletedStudentSelected) {
                         <span class="bg-blue-100 text-blue-800 text-sm font-semibold pl-3 pr-2 py-1 rounded-full flex items-center">
                             ${student.name}
                             ${id !== primaryStudent.id && !isDeletedStudentSelected ? `
-                                <button onclick="removeTargetStudent('${id}')" class="ml-2 text-blue-500 hover:text-blue-800 w-5 h-5 flex items-center justify-center rounded-full hover:bg-blue-200 transition-colors" title="${student.name}님을 대상에서 제외">
+                                <button onclick="removeTargetStudent('${id}')" class="ml-2 text-blue-500 hover:text-blue-800 w-5 h-5 flex items-center justify-center rounded-full hover:bg-blue-200 transition-colors" title="${getMessage('ui.tooltips.removeFromTarget', { name: student.name })}">
                                     <i class="fas fa-times text-xs"></i>
                                 </button>
                             ` : ''}
@@ -284,9 +284,9 @@ function renderObservationForm(primaryStudent, isDeletedStudentSelected) {
             </div>
         </div>
 
-        <textarea id="observationText" rows="4" class="w-full p-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 no-print" placeholder="${isDeletedStudentSelected ? '삭제된 학생의 기록은 추가할 수 없습니다.' : '학생의 구체적인 행동이나 발언을 기록하세요. 예: (국어) 수업 중 적극적으로 발표함.'}" ${isDeletedStudentSelected ? 'disabled' : ''}>${savedText}</textarea>
+        <textarea id="observationText" rows="4" class="w-full p-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 no-print" placeholder="${isDeletedStudentSelected ? getMessage('ui.observation.placeholderDeleted') : getMessage('ui.observation.placeholder')}" ${isDeletedStudentSelected ? 'disabled' : ''}>${savedText}</textarea>
         <div class="flex justify-end mt-3 no-print">
-            <button onclick="handleAddObservation()" class="px-5 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:bg-blue-300 transition-colors" ${isDeletedStudentSelected ? 'disabled' : ''}>기록하기</button>
+            <button onclick="handleAddObservation()" class="px-5 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:bg-blue-300 transition-colors" ${isDeletedStudentSelected ? 'disabled' : ''}>${getMessage('ui.observation.addButton')}</button>
         </div>
     `;
 }
@@ -298,7 +298,7 @@ function renderObservationPanel(observations) {
     
     return `
         <div id="observationPanel" class="bg-white p-4 rounded-lg shadow-sm flex flex-col">
-            <h3 class="text-lg font-semibold text-slate-800 mb-3 border-b pb-2">누가 기록</h3>
+            <h3 class="text-lg font-semibold text-slate-800 mb-3 border-b pb-2">${getMessage('ui.observation.panelTitle')}</h3>
             <div class="flex-grow overflow-y-auto pr-2">
                 ${observations.length > 0 ? `
                     <ul class="space-y-4">
@@ -319,14 +319,14 @@ function renderObservationPanel(observations) {
                                         <button 
                                             onclick="startEditObservation('${studentId}', '${obs.id}')" 
                                             class="text-blue-500 hover:text-blue-700 text-xs px-2 py-1 rounded hover:bg-blue-50 transition-colors"
-                                            title="수정"
+                                            title="${getMessage('ui.observation.editButton')}"
                                         >
                                             <i class="fas fa-edit"></i>
                                         </button>
                                         <button 
                                             onclick="deleteObservationEvent('${studentId}', '${obs.id}')" 
                                             class="text-red-500 hover:text-red-700 text-xs px-2 py-1 rounded hover:bg-red-50 transition-colors"
-                                            title="삭제"
+                                            title="${getMessage('ui.observation.deleteButton')}"
                                         >
                                             <i class="fas fa-trash-alt"></i>
                                         </button>
@@ -337,7 +337,7 @@ function renderObservationPanel(observations) {
                     </ul>
                 ` : `
                     <div class="flex items-center justify-center h-full text-slate-500">
-                        <p>기록된 관찰 내용이 없습니다.</p>
+                        <p>${getMessage('ui.observation.noRecordsDisplay')}</p>
                     </div>
                 `}
             </div>
@@ -351,7 +351,7 @@ function renderSummaryPanel(studentData, isStudentDeleted) {
     const summary = studentData.summary || '';
     const summaryTimestamp = studentData.summaryTimestamp;
     
-    let buttonText = '요약 생성';
+    let buttonText = getMessage('ui.summary.generateButton');
     let buttonClass = 'bg-indigo-600 hover:bg-indigo-700';
     
     if (summary) {
@@ -359,10 +359,10 @@ function renderSummaryPanel(studentData, isStudentDeleted) {
             new Date(observations.reduce((latest, obs) => (new Date(obs.timestamp) > new Date(latest) ? obs.timestamp : latest), observations[0].timestamp)) > new Date(summaryTimestamp);
         
         if (!summaryTimestamp || hasNewObservations) {
-            buttonText = '업데이트';
+            buttonText = getMessage('ui.summary.updateButton');
             buttonClass = 'bg-green-600 hover:bg-green-700';
         } else {
-            buttonText = '다시분석';
+            buttonText = getMessage('ui.summary.regenerateButton');
             buttonClass = 'bg-blue-600 hover:bg-blue-700';
         }
     }
@@ -372,21 +372,21 @@ function renderSummaryPanel(studentData, isStudentDeleted) {
     return `
         <div class="bg-white p-4 rounded-lg shadow-sm flex flex-col">
             <div class="flex justify-between items-center mb-3 border-b pb-2">
-                <h3 class="text-lg font-semibold text-slate-800">AI 요약 및 분석</h3>
+                <h3 class="text-lg font-semibold text-slate-800">${getMessage('ui.summary.title')}</h3>
                 ${summaryTimestamp ? `
                     <span class="text-xs text-slate-500 ml-auto mr-4" title="마지막 분석: ${formatDate(summaryTimestamp)}">
                         ${formatDateShort(summaryTimestamp)}
                     </span>
                 ` : ''}
                 <button onclick="generateSummaryEvent()" class="no-print flex items-center px-4 py-2 text-sm font-medium text-white rounded-md transition-colors disabled:bg-slate-400 disabled:cursor-not-allowed ${buttonClass}" ${isActionDisabled ? 'disabled' : ''}>
-                    <i class="fas fa-magic-sparkles mr-2"></i> ${appState.isLoadingSummary ? '생성 중...' : buttonText}
+                    <i class="fas fa-magic-sparkles mr-2"></i> ${appState.isLoadingSummary ? getMessage('ui.summary.generating') : buttonText}
                 </button>
             </div>
             <div class="flex-grow overflow-y-auto pr-2">
                 ${appState.isLoadingSummary ? `
                     <div class="flex flex-col items-center justify-center h-full text-slate-500">
                         <div class="loading-spinner"></div>
-                        <p class="mt-4">AI가 관찰 기록을 분석하고 있습니다...</p>
+                        <p class="mt-4">${getMessage('ui.summary.loading')}</p>
                     </div>
                 ` : summary ? `
                     <div class="prose prose-sm max-w-none text-slate-700">
@@ -395,9 +395,9 @@ function renderSummaryPanel(studentData, isStudentDeleted) {
                 ` : `
                     <div class="flex flex-col items-center justify-center h-full text-slate-500 text-center">
                         <i class="fas fa-lightbulb text-4xl mb-4 text-indigo-300"></i>
-                        <p>관찰 기록을 바탕으로 AI가</p>
-                        <p>학생의 종합적인 분석을 제공합니다.</p>
-                        <p class="text-xs mt-2">(기록이 3개 이상일 때 가장 효과적입니다.)</p>
+                        <p>${getMessage('ui.summary.emptyLine1')}</p>
+                        <p>${getMessage('ui.summary.emptyLine2')}</p>
+                        <p class="text-xs mt-2">${getMessage('ui.summary.emptyLine3')}</p>
                     </div>
                 `}
             </div>
@@ -412,84 +412,94 @@ function renderSettingsModal() {
             <div class="bg-white rounded-lg shadow-xl w-full max-w-md max-h-[90vh] flex flex-col transform transition-all duration-300 animate-fade-in-scale">
                 <div class="flex-shrink-0 p-6 border-b border-slate-200">
                     <div class="flex items-center justify-between">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-full bg-blue-100 mr-3">
-                                <i class="fas fa-cog text-blue-600 text-xl"></i>
-                            </div>
-                            <h3 class="text-lg leading-6 font-bold text-slate-900">앱 설정</h3>
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-full bg-blue-100 mr-3">
+                            <i class="fas fa-cog text-blue-600 text-xl"></i>
                         </div>
-                        <div class="flex space-x-3">
-                            <button onclick="closeSettings()" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                취소
-                            </button>
-                            <button onclick="saveSettings()" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                저장
-                            </button>
-                        </div>
+                        <h3 class="text-lg leading-6 font-bold text-slate-900">${getMessage('ui.settings.title')}</h3>
+                    </div>
+                    <div class="flex space-x-3">
+                        <button onclick="closeSettings()" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            ${getMessage('ui.settings.cancel')}
+                        </button>
+                        <button onclick="saveSettings()" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            ${getMessage('ui.settings.save')}
+                        </button>
+                    </div>
                     </div>
                 </div>
                 <div class="flex-1 overflow-y-auto p-6">
                     <div class="space-y-4">
                             <div>
-                                <label class="block text-sm font-medium text-slate-700">앱 타이틀</label>
-                                <input type="text" id="appTitle" value="${appState.settings.appTitle}" class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="예: AI ClassNote">
+                                <label class="block text-sm font-medium text-slate-700">${getMessage('ui.settings.appTitleLabel')}</label>
+                                <input type="text" id="appTitle" value="${appState.settings.appTitle}" class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="${getMessage('ui.settings.appTitlePlaceholder')}">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-slate-700">학급 정보</label>
-                                <input type="text" id="classInfo" value="${appState.settings.classInfo}" class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="예: OO초등학교 1학년 2반">
+                                <label class="block text-sm font-medium text-slate-700">${getMessage('ui.settings.classInfoLabel')}</label>
+                                <input type="text" id="classInfo" value="${appState.settings.classInfo}" class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="${getMessage('ui.settings.classInfoPlaceholder')}">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-slate-700">교사 정보</label>
-                                <input type="text" id="teacherName" value="${appState.settings.teacherName}" class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="예: 담임교사 홍길동">
+                                <label class="block text-sm font-medium text-slate-700">${getMessage('ui.settings.teacherNameLabel')}</label>
+                                <input type="text" id="teacherName" value="${appState.settings.teacherName}" class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="${getMessage('ui.settings.teacherNamePlaceholder')}">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700">${getMessage('ui.settings.languageLabel')}</label>
+                                <select id="languageSelect" class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                    <option value="ko" ${getCurrentLanguage() === 'ko' ? 'selected' : ''}>${getMessage('ui.settings.languageKorean')}</option>
+                                    <option value="en" ${getCurrentLanguage() === 'en' ? 'selected' : ''}>${getMessage('ui.settings.languageEnglish')}</option>
+                                </select>
+                                <p class="mt-2 text-xs text-slate-500">
+                                    ${getMessage('ui.settings.languageNote')}
+                                </p>
                             </div>
                             <div>
                                 <div class="flex items-center justify-between mb-1">
-                                    <label class="block text-sm font-medium text-slate-700">Gemini API 키</label>
-                                    <a onclick="openApiKeyGuide()" class="text-xs text-blue-600 hover:text-blue-800 cursor-pointer flex items-center" title="API Key 받는 방법 보기">
+                                    <label class="block text-sm font-medium text-slate-700">${getMessage('ui.settings.apiKeyLabel')}</label>
+                                    <a onclick="openApiKeyGuide()" class="text-xs text-blue-600 hover:text-blue-800 cursor-pointer flex items-center" title="${getMessage('ui.settings.apiKeyHowTo')}">
                                         <i class="fas fa-question-circle mr-1"></i>
-                                        받는 방법
+                                        ${getMessage('ui.settings.apiKeyHowTo')}
                                     </a>
                                 </div>
                                 <div class="flex gap-2">
-                                    <input type="password" id="apiKey" value="${getApiKey() || ''}" class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="API 키를 입력하세요">
-                                    <button onclick="toggleApiKeyVisibility()" class="mt-1 px-3 py-2 border border-slate-300 rounded-md bg-slate-50 hover:bg-slate-100 flex-shrink-0" title="표시/숨김">
+                                    <input type="password" id="apiKey" value="${getApiKey() || ''}" class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="${getMessage('ui.settings.apiKeyPlaceholder')}">
+                                    <button onclick="toggleApiKeyVisibility()" class="mt-1 px-3 py-2 border border-slate-300 rounded-md bg-slate-50 hover:bg-slate-100 flex-shrink-0" title="${getMessage('ui.tooltips.toggleVisibility')}">
                                         <i class="fas fa-eye"></i>
                                     </button>
-                                    <button onclick="deleteApiKey()" class="mt-1 px-3 py-2 border border-red-300 rounded-md bg-red-50 hover:bg-red-100 text-red-600 flex-shrink-0" title="API 키 삭제">
+                                    <button onclick="deleteApiKey()" class="mt-1 px-3 py-2 border border-red-300 rounded-md bg-red-50 hover:bg-red-100 text-red-600 flex-shrink-0" title="${getMessage('ui.tooltips.deleteApiKey')}">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
                                 <p class="mt-2 text-xs text-slate-500">
-                                    💡 API 키는 브라우저에 저장됩니다. 공용 컴퓨터에서는 사용 후 [삭제] 버튼을 눌러주세요.
+                                    ${getMessage('ui.settings.apiKeyNote')}
                                 </p>
                             </div>
                         </div>
 
                         <div class="mt-6 pt-4 border-t border-slate-200">
-                            <h4 class="text-base font-bold text-slate-800 mb-2">AI 요약 프롬프트</h4>
+                            <h4 class="text-base font-bold text-slate-800 mb-2">${getMessage('ui.settings.promptTitle')}</h4>
                             <p class="text-xs text-slate-500 mb-3">
-                                프롬프트는 <code class="px-1.5 py-0.5 bg-slate-100 rounded text-xs font-mono">prompt.js</code> 파일에서 관리됩니다.
-                                <br>직접 파일을 수정하거나 아래 버튼으로 편집할 수 있습니다.
+                                ${getMessage('ui.settings.promptDesc1')} <code class="px-1.5 py-0.5 bg-slate-100 rounded text-xs font-mono">prompt.js</code> ${getMessage('ui.settings.promptDesc2')}
+                                <br>${getMessage('ui.settings.promptDesc3')}
                             </p>
                             <p class="text-sm text-slate-600 mb-3">
                                 ${appState.settings.customPrompt ? 
-                                    '<span class="text-blue-600"><i class="fas fa-check-circle mr-1"></i>사용자 커스텀 프롬프트 사용 중</span>' : 
-                                    '<span class="text-green-600"><i class="fas fa-file-code mr-1"></i>기본 프롬프트 (prompt.js) 사용 중</span>'
+                                    `<span class="text-blue-600"><i class="fas fa-check-circle mr-1"></i>${getMessage('ui.settings.promptCustom')}</span>` : 
+                                    `<span class="text-green-600"><i class="fas fa-file-code mr-1"></i>${getMessage('ui.settings.promptDefault')}</span>`
                                 }
                             </p>
                             <button onclick="openPromptEditor()" class="w-full inline-flex justify-center items-center rounded-md border border-blue-300 shadow-sm px-4 py-2 bg-blue-50 text-sm font-medium text-blue-700 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                <i class="fas fa-edit mr-2"></i> 프롬프트 편집하기
+                                <i class="fas fa-edit mr-2"></i> ${getMessage('ui.settings.editPrompt')}
                             </button>
                         </div>
 
                         <div class="mt-6 pt-4 border-t border-slate-200">
-                            <h4 class="text-base font-bold text-slate-800 mb-3">데이터 관리</h4>
+                            <h4 class="text-base font-bold text-slate-800 mb-3">${getMessage('ui.settings.dataManagementTitle')}</h4>
                             <div class="grid grid-cols-2 gap-3">
                                 <button onclick="exportData()" class="w-full inline-flex justify-center items-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-slate-600 text-sm font-medium text-white hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500">
-                                    <i class="fas fa-file-export mr-2"></i> 데이터 내보내기
+                                    <i class="fas fa-file-export mr-2"></i> ${getMessage('ui.settings.exportData')}
                                 </button>
                                 <button onclick="showImportDialog()" class="w-full inline-flex justify-center items-center rounded-md border border-slate-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                    <i class="fas fa-file-import mr-2"></i> 데이터 가져오기
+                                    <i class="fas fa-file-import mr-2"></i> ${getMessage('ui.settings.importData')}
                                 </button>
                             </div>
                             <input type="file" id="importFile" accept="application/json" style="display: none;" onchange="handleFileImport(event)">
@@ -512,8 +522,8 @@ function renderPromptEditorModal() {
                             <i class="fas fa-edit text-blue-600 text-lg"></i>
                         </div>
                         <div>
-                            <h3 class="text-lg font-bold text-slate-900">AI 요약 프롬프트 편집</h3>
-                            <p class="text-xs text-slate-500 mt-0.5">{{STUDENT_NAME}}, {{OBSERVATIONS}} 변수를 사용할 수 있습니다.</p>
+                            <h3 class="text-lg font-bold text-slate-900">${getMessage('ui.promptEditor.title')}</h3>
+                            <p class="text-xs text-slate-500 mt-0.5">${getMessage('ui.promptEditor.variableNote')}</p>
                         </div>
                     </div>
                     <button onclick="closePromptEditor()" class="text-slate-400 hover:text-slate-600 transition-colors">
@@ -524,27 +534,27 @@ function renderPromptEditorModal() {
                 <div class="flex-grow overflow-y-auto p-6">
                     <div class="mb-3 p-3 bg-blue-50 border border-blue-200 rounded-md">
                         <h4 class="text-sm font-semibold text-blue-800 mb-1">
-                            <i class="fas fa-info-circle mr-1"></i> 프롬프트 관리 방법
+                            <i class="fas fa-info-circle mr-1"></i> ${getMessage('ui.promptEditor.howToTitle')}
                         </h4>
                         <ul class="text-xs text-blue-700 space-y-1 ml-5 list-disc">
-                            <li><strong>기본 사용:</strong> <code class="px-1 py-0.5 bg-blue-100 rounded">prompt.js</code> 파일의 기본 프롬프트가 자동으로 로드됩니다</li>
-                            <li><strong>커스텀 프롬프트:</strong> 여기서 수정하고 저장하면 사용자 커스텀 프롬프트로 적용됩니다</li>
-                            <li><strong>초기화:</strong> '초기값으로' 버튼을 누르면 편집기가 기본 프롬프트로 초기화됩니다 (저장 필요)</li>
+                            <li>${getMessage('ui.promptEditor.howToDefault')}</li>
+                            <li>${getMessage('ui.promptEditor.howToCustom')}</li>
+                            <li>${getMessage('ui.promptEditor.howToReset')}</li>
                         </ul>
                     </div>
-                    <textarea id="promptEditorText" rows="18" class="w-full px-4 py-3 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm font-mono text-xs resize-none" placeholder="사용자 정의 프롬프트를 입력하세요..."></textarea>
+                    <textarea id="promptEditorText" rows="18" class="w-full px-4 py-3 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm font-mono text-xs resize-none" placeholder="${getMessage('ui.promptEditor.placeholder')}"></textarea>
                 </div>
                 
                 <div class="flex items-center justify-between p-6 border-t border-slate-200 bg-slate-50">
                     <button onclick="loadDefaultPromptToPromptEditor()" class="inline-flex items-center px-4 py-2 border border-slate-300 shadow-sm text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                        <i class="fas fa-undo mr-2"></i> 초기값으로
+                        <i class="fas fa-undo mr-2"></i> ${getMessage('ui.promptEditor.resetButton')}
                     </button>
                     <div class="flex space-x-3">
                         <button onclick="closePromptEditor()" class="inline-flex items-center px-4 py-2 border border-slate-300 shadow-sm text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500">
-                            닫기
+                            ${getMessage('ui.promptEditor.closeButton')}
                         </button>
                         <button onclick="savePromptFromEditor()" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                            <i class="fas fa-save mr-2"></i> 저장
+                            <i class="fas fa-save mr-2"></i> ${getMessage('ui.promptEditor.saveButton')}
                         </button>
                     </div>
                 </div>
@@ -564,17 +574,17 @@ function renderStudentModal() {
             <div class="bg-white rounded-lg shadow-xl w-full max-w-md max-h-[80vh] flex flex-col transform transition-all duration-300 animate-fade-in-scale">
                 <div class="flex-shrink-0 p-4 border-b border-slate-200">
                     <div class="flex items-center justify-between mb-3">
-                        <h3 class="text-lg font-bold text-slate-900">학생 관리</h3>
+                        <h3 class="text-lg font-bold text-slate-900">${getMessage('ui.studentModal.title')}</h3>
                         <button onclick="closeStudentModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
                             <i class="fas fa-times text-xl"></i>
                         </button>
                     </div>
                     <div class="flex border-b border-gray-200">
                         <button onclick="setViewMode('active')" class="flex-1 py-2 text-sm font-medium ${appState.viewMode === 'active' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-slate-500'}">
-                            현재 학생 (${activeStudents.length})
+                            ${getMessage('ui.studentModal.activeTab', { count: activeStudents.length })}
                         </button>
                         <button onclick="setViewMode('deleted')" class="flex-1 py-2 text-sm font-medium ${appState.viewMode === 'deleted' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-slate-500'}">
-                            삭제된 학생 (${deletedStudents.length})
+                            ${getMessage('ui.studentModal.deletedTab', { count: deletedStudents.length })}
                         </button>
                     </div>
                 </div>
@@ -582,8 +592,8 @@ function renderStudentModal() {
                     ${studentsToDisplay.length === 0 ? `
                         <div class="text-center text-slate-500 py-8">
                             ${appState.viewMode === 'active' ? 
-                                '<p class="font-medium">학생이 없습니다</p><p class="text-sm mt-2">아래 버튼을 눌러 첫 번째 학생을 추가하세요.</p>' : 
-                                '<p class="font-medium">삭제된 학생이 없습니다</p>'
+                                `<p class="font-medium">${getMessage('ui.studentModal.noStudents')}</p><p class="text-sm mt-2">${getMessage('ui.studentModal.noStudentsDesc')}</p>` : 
+                                `<p class="font-medium">${getMessage('ui.studentModal.noDeletedStudents')}</p>`
                             }
                         </div>
                     ` : `
@@ -595,7 +605,7 @@ function renderStudentModal() {
                 ${appState.viewMode === 'active' ? `
                     <div class="p-4 border-t border-slate-200">
                         <button onclick="showAddStudentForm(); closeStudentModal();" class="w-full flex items-center justify-center px-4 py-3 font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors">
-                            <i class="fas fa-plus mr-2"></i> 학생 추가하기
+                            <i class="fas fa-plus mr-2"></i> ${getMessage('ui.studentModal.addStudent')}
                         </button>
                     </div>
                 ` : ''}
@@ -613,7 +623,7 @@ function renderStudentModalItem(student) {
         <li class="flex justify-between items-center p-3 rounded-md transition-colors ${isSelected ? 'bg-blue-50' : 'hover:bg-slate-50'}">
             <div class="flex items-center flex-grow min-w-0">
                 ${appState.viewMode === 'active' && !isSelected ? `
-                    <button onclick="addTargetStudent('${student.id}'); updateStudentModalContent();" class="mr-3 text-slate-400 hover:text-blue-600 w-6 h-6 flex items-center justify-center rounded-full hover:bg-blue-100 transition-colors flex-shrink-0" title="${student.name}님을 관찰 대상에 추가">
+                    <button onclick="addTargetStudent('${student.id}'); updateStudentModalContent();" class="mr-3 text-slate-400 hover:text-blue-600 w-6 h-6 flex items-center justify-center rounded-full hover:bg-blue-100 transition-colors flex-shrink-0" title="${getMessage('ui.tooltips.addToTarget', { name: student.name })}">
                         <i class="fas fa-plus"></i>
                     </button>
                 ` : ''}
@@ -625,14 +635,14 @@ function renderStudentModalItem(student) {
             </div>
             <div class="space-x-2 flex-shrink-0 ml-2">
                 ${appState.viewMode === 'active' ? `
-                    <button onclick="softDeleteStudent('${student.id}')" class="text-slate-400 hover:text-red-500 p-2" title="삭제">
+                    <button onclick="softDeleteStudent('${student.id}')" class="text-slate-400 hover:text-red-500 p-2" title="${getMessage('ui.buttons.delete')}">
                         <i class="fas fa-trash-alt"></i>
                     </button>
                 ` : `
-                    <button onclick="restoreStudent('${student.id}')" class="text-slate-400 hover:text-green-600 p-2" title="복원">
+                    <button onclick="restoreStudent('${student.id}')" class="text-slate-400 hover:text-green-600 p-2" title="${getMessage('ui.buttons.restore')}">
                         <i class="fas fa-undo"></i>
                     </button>
-                    <button onclick="permanentDeleteStudent('${student.id}')" class="text-slate-400 hover:text-red-600 p-2" title="영구 삭제">
+                    <button onclick="permanentDeleteStudent('${student.id}')" class="text-slate-400 hover:text-red-600 p-2" title="${getMessage('ui.tooltips.permanentDelete')}">
                         <i class="fas fa-eraser"></i>
                     </button>
                 `}
@@ -651,7 +661,7 @@ function renderApiKeyGuideModal() {
                     <div class="flex items-center justify-between">
                         <h3 class="text-xl font-bold text-slate-900">
                             <i class="fas fa-key text-blue-600 mr-2"></i>
-                            Gemini API Key 받는 방법
+                            ${getMessage('ui.apiKeyGuide.title')}
                         </h3>
                         <button onclick="closeApiKeyGuide()" class="text-slate-400 hover:text-slate-600 transition-colors">
                             <i class="fas fa-times text-xl"></i>
@@ -666,14 +676,14 @@ function renderApiKeyGuideModal() {
                         <div class="flex items-start space-x-4">
                             <div class="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">1</div>
                             <div class="flex-1">
-                                <h4 class="font-semibold text-slate-800 mb-2">Google AI Studio 접속</h4>
+                                <h4 class="font-semibold text-slate-800 mb-2">${getMessage('ui.apiKeyGuide.step1Title')}</h4>
                                 <p class="text-sm text-slate-600 mb-2">
-                                    아래 링크를 클릭하여 Google AI Studio에 접속하세요.
+                                    ${getMessage('ui.apiKeyGuide.step1Desc')}
                                 </p>
                                 <a href="https://aistudio.google.com/app/apikey" target="_blank" 
                                    class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm transition-colors">
                                     <i class="fas fa-external-link-alt mr-2"></i>
-                                    AI Studio 열기
+                                    ${getMessage('ui.apiKeyGuide.step1Button')}
                                 </a>
                             </div>
                         </div>
@@ -682,9 +692,9 @@ function renderApiKeyGuideModal() {
                         <div class="flex items-start space-x-4">
                             <div class="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">2</div>
                             <div class="flex-1">
-                                <h4 class="font-semibold text-slate-800 mb-2">Google 계정으로 로그인</h4>
+                                <h4 class="font-semibold text-slate-800 mb-2">${getMessage('ui.apiKeyGuide.step2Title')}</h4>
                                 <p class="text-sm text-slate-600">
-                                    Google 계정으로 로그인하세요. 계정이 없다면 새로 만들 수 있습니다.
+                                    ${getMessage('ui.apiKeyGuide.step2Desc')}
                                 </p>
                             </div>
                         </div>
@@ -693,18 +703,18 @@ function renderApiKeyGuideModal() {
                         <div class="flex items-start space-x-4">
                             <div class="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">3</div>
                             <div class="flex-1">
-                                <h4 class="font-semibold text-slate-800 mb-2">API Key 생성</h4>
+                                <h4 class="font-semibold text-slate-800 mb-2">${getMessage('ui.apiKeyGuide.step3Title')}</h4>
                                 <p class="text-sm text-slate-600 mb-2">
-                                    왼쪽 아래 "Get API Key" 메뉴의 "API 키 만들기" 버튼을 클릭하세요.
+                                    ${getMessage('ui.apiKeyGuide.step3Desc')}
                                 </p>
                                 <div class="bg-yellow-50 border border-yellow-200 rounded-md p-3 text-sm text-yellow-800">
                                     <i class="fas fa-lightbulb mr-1"></i>
-                                    <strong>팁:</strong>
+                                    ${getMessage('ui.apiKeyGuide.step3Tip')}
                                     <ol>
-                                        <li> 1. 키 이름 : 'ai-classnote' 입력
-                                        <li> 2. 가져온 프로젝트 : +Create a New Project 선택
-                                        <li> 3. 프로젝트 이름: 'ai-classnote' 입력
-                                        <li> 4. 키 생성 : [키 만들기] 버튼 클릭
+                                        <li> ${getMessage('ui.apiKeyGuide.step3Tip1')}
+                                        <li> ${getMessage('ui.apiKeyGuide.step3Tip2')}
+                                        <li> ${getMessage('ui.apiKeyGuide.step3Tip3')}
+                                        <li> ${getMessage('ui.apiKeyGuide.step3Tip4')}
                                     </ol>
                                 </div>
                             </div>
@@ -714,19 +724,19 @@ function renderApiKeyGuideModal() {
                         <div class="flex items-start space-x-4">
                             <div class="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">4</div>
                             <div class="flex-1">
-                                <h4 class="font-semibold text-slate-800 mb-2">API Key 복사</h4>
-                                <p class="text-sm text-slate-600 mb-2">생성된 API Key를 복사하세요. (보통 "AI"로 시작하는 긴 문자열입니다)</p>
+                                <h4 class="font-semibold text-slate-800 mb-2">${getMessage('ui.apiKeyGuide.step4Title')}</h4>
+                                <p class="text-sm text-slate-600 mb-2">${getMessage('ui.apiKeyGuide.step4Desc')}</p>
                                 <div class="bg-yellow-50 border border-yellow-200 rounded-md p-3 text-sm text-yellow-800">
                                     <i class="fas fa-lightbulb mr-1"></i>
-                                    <strong>팁:</strong>
+                                    ${getMessage('ui.apiKeyGuide.step3Tip')}
                                     <ol>
-                                        <li> 1. 생성된 키 목록의 프로젝트 이름 'ai-classnote' 를 확인하세요.
-                                        <li> 2. 오른쪽 'Copy API Key' 버튼을 클릭하여 복사하세요.
+                                        <li> ${getMessage('ui.apiKeyGuide.step4Tip1')}
+                                        <li> ${getMessage('ui.apiKeyGuide.step4Tip2')}
                                     </ol>
                                 </div>
                                 <div class="bg-red-50 border border-red-200 rounded-md p-3 text-sm text-red-800">
                                     <i class="fas fa-exclamation-triangle mr-1"></i>
-                                    <strong>주의:</strong> API Key는 안전하게 보관하세요. 다른 사람과 공유하지 마세요!
+                                    ${getMessage('ui.apiKeyGuide.step4Warning')}
                                 </div>
                             </div>
                         </div>
@@ -735,14 +745,14 @@ function renderApiKeyGuideModal() {
                         <div class="flex items-start space-x-4">
                             <div class="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">5</div>
                             <div class="flex-1">
-                                <h4 class="font-semibold text-slate-800 mb-2">아래에 API Key 입력</h4>
+                                <h4 class="font-semibold text-slate-800 mb-2">${getMessage('ui.apiKeyGuide.step5Title')}</h4>
                                 <p class="text-sm text-slate-600 mb-3">
-                                    복사한 API Key를 아래 입력란에 붙여넣고 저장하세요.
+                                    ${getMessage('ui.apiKeyGuide.step5Desc')}
                                 </p>
                                 <div class="space-y-2">
                                     <input type="text" id="apiKeyGuideInput" 
                                            class="w-full px-4 py-3 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
-                                           placeholder="AIza... 로 시작하는 API Key를 입력하세요">
+                                           placeholder="${getMessage('ui.apiKeyGuide.placeholder')}">
                                 </div>
                             </div>
                         </div>
@@ -754,17 +764,17 @@ function renderApiKeyGuideModal() {
                     <div class="flex justify-between items-center">
                         <div class="text-sm text-slate-600">
                             <i class="fas fa-info-circle mr-1"></i>
-                            무료 할당량: 월 15 RPM (분당 요청 수)
+                            ${getMessage('ui.apiKeyGuide.freeQuota')}
                         </div>
                         <div class="flex space-x-3">
                             <button onclick="closeApiKeyGuide()" 
                                     class="px-4 py-2 border border-slate-300 rounded-md text-slate-700 bg-white hover:bg-slate-50 transition-colors">
-                                나중에
+                                ${getMessage('ui.apiKeyGuide.laterButton')}
                             </button>
                             <button onclick="saveApiKeyFromGuide()" 
                                     class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
                                 <i class="fas fa-save mr-2"></i>
-                                저장하고 시작하기
+                                ${getMessage('ui.apiKeyGuide.saveButton')}
                             </button>
                         </div>
                     </div>
@@ -848,7 +858,7 @@ function toggleApiKeyVisibility() {
         }
     } catch (error) {
         console.error('API 키 표시/숨김 토글 중 오류:', error);
-        showError('API 키 표시/숨김 전환 중 오류가 발생했습니다.');
+        showError(getMessage('apiKey.toggleError'));
     }
 }
 
@@ -858,11 +868,11 @@ window.toggleApiKeyVisibility = toggleApiKeyVisibility;
 // API 키 삭제
 function deleteApiKey() {
     if (!getApiKey()) {
-        showToast('삭제할 API 키가 없습니다.', 'info');
+        showToast(getMessage('apiKey.noKeyToDelete'), 'info');
         return;
     }
     
-    if (confirmAction('저장된 API 키를 삭제하시겠습니까?\n삭제 후 다시 사용하려면 API 키를 재입력해야 합니다.')) {
+    if (confirmAction(getMessage('apiKey.deleteConfirm'))) {
         // API 키 완전 삭제
         setApiKey(null);
         
@@ -872,7 +882,7 @@ function deleteApiKey() {
             apiKeyEl.value = '';
         }
         
-        showSuccess('API 키가 삭제되었습니다.');
+        showSuccess(getMessage('apiKey.deleted'));
     }
 }
 
@@ -921,21 +931,21 @@ function closeApiKeyGuide() {
 function saveApiKeyFromGuide() {
     const input = document.getElementById('apiKeyGuideInput');
     if (!input) {
-        showError('입력 필드를 찾을 수 없습니다.');
+        showError(getMessage('apiKey.inputNotFound'));
         return;
     }
     
     const key = input.value.trim();
     
     if (!key) {
-        showError('API Key를 입력해주세요.');
+        showError(getMessage('apiKey.required'));
         input.focus();
         return;
     }
     
     // API 키 유효성 검사
     if (!validateApiKey(key)) {
-        showError('올바른 API Key 형식이 아닙니다. API Key는 보통 "AI"로 시작하는 30자 이상의 문자열입니다.');
+        showError(getMessage('apiKey.invalidFormat'));
         input.focus();
         return;
     }
@@ -943,7 +953,7 @@ function saveApiKeyFromGuide() {
     // API 키 저장
     setApiKey(key);
     closeApiKeyGuide();
-    showSuccess('API Key가 저장되었습니다. 이제 AI 분석을 사용할 수 있습니다!');
+    showSuccess(getMessage('apiKey.saved'));
     
     // UI 업데이트 (헤더의 링크 숨기기 위해)
     renderApp();
@@ -1011,10 +1021,17 @@ function saveSettings() {
         const classInfoEl = document.getElementById('classInfo');
         const teacherNameEl = document.getElementById('teacherName');
         const apiKeyEl = document.getElementById('apiKey');
+        const languageSelectEl = document.getElementById('languageSelect');
         
-        if (!appTitleEl || !classInfoEl || !teacherNameEl || !apiKeyEl) {
-            showError('설정 폼을 찾을 수 없습니다. 페이지를 새로고침해주세요.');
+        if (!appTitleEl || !classInfoEl || !teacherNameEl || !apiKeyEl || !languageSelectEl) {
+            showError(getMessage('settings.formNotFound'));
             return;
+        }
+        
+        // 언어 변경 처리
+        const selectedLanguage = languageSelectEl.value;
+        if (selectedLanguage !== getCurrentLanguage()) {
+            setLanguage(selectedLanguage);
         }
         
         const newSettings = {
@@ -1032,10 +1049,10 @@ function saveSettings() {
         updateSettings(newSettings);
         closeSettings();
         renderApp();
-        showSuccess('설정이 저장되었습니다.');
+        showSuccess(getMessage('settings.saved'));
     } catch (error) {
         console.error('설정 저장 중 오류:', error);
-        showError('설정 저장 중 오류가 발생했습니다: ' + error.message);
+        showError(getMessage('settings.saveError') + ': ' + error.message);
     }
 }
 
@@ -1047,11 +1064,11 @@ function showImportDialog() {
             importFileEl.click();
         } else {
             console.error('파일 입력 요소를 찾을 수 없습니다.');
-            showError('파일 선택 대화상자를 열 수 없습니다.');
+            showError(getMessage('file.selectDialogError'));
         }
     } catch (error) {
         console.error('파일 가져오기 다이얼로그 표시 중 오류:', error);
-        showError('파일 가져오기 다이얼로그 표시 중 오류가 발생했습니다.');
+        showError(getMessage('file.importDialogError'));
     }
 }
 
@@ -1070,14 +1087,14 @@ function handleFileImport(event) {
                 }
             }).catch(error => {
                 console.error('파일 읽기 오류:', error);
-                showError('파일을 읽는 중 오류가 발생했습니다: ' + error.message);
+                showError(getMessage('file.readError') + ': ' + error.message);
             });
         }
         // 파일 입력 초기화
         event.target.value = '';
     } catch (error) {
         console.error('파일 가져오기 처리 중 오류:', error);
-        showError('파일 가져오기 처리 중 오류가 발생했습니다.');
+        showError(getMessage('file.importError'));
     }
 }
 
@@ -1111,7 +1128,7 @@ function openPromptEditor() {
         const textArea = document.getElementById('promptEditorText');
         
         if (!modal || !textArea) {
-            showError('프롬프트 편집기를 찾을 수 없습니다.');
+            showError(getMessage('prompt.notFound'));
             return;
         }
         
@@ -1131,7 +1148,7 @@ function openPromptEditor() {
         setTimeout(() => textArea.focus(), 100);
     } catch (error) {
         console.error('프롬프트 편집기 열기 오류:', error);
-        showError('프롬프트 편집기를 여는 중 오류가 발생했습니다.');
+        showError(getMessage('prompt.openError'));
     }
 }
 
@@ -1147,7 +1164,7 @@ function closePromptEditor() {
     const hasChanges = currentText !== promptEditorState.originalPrompt;
     
     if (hasChanges) {
-        if (confirmAction('저장하지 않은 변경사항이 있습니다.\n닫으시겠습니까?')) {
+        if (confirmAction(getMessage('prompt.closeConfirm'))) {
             modal.style.display = 'none';
             promptEditorState.isOpen = false;
         }
@@ -1162,11 +1179,11 @@ function loadDefaultPromptToPromptEditor() {
     try {
         const textArea = document.getElementById('promptEditorText');
         if (!textArea) {
-            showError('프롬프트 편집기를 찾을 수 없습니다.');
+            showError(getMessage('prompt.notFound'));
             return;
         }
         
-        if (confirmAction('편집기를 기본 프롬프트로 초기화하시겠습니까?\n현재 편집 중인 내용은 사라지며, 저장은 직접 하셔야 합니다.')) {
+        if (confirmAction(getMessage('prompt.resetConfirm'))) {
             // prompt.js의 기본 프롬프트로 텍스트 영역 덮어쓰기
             const defaultPrompt = getDefaultPromptTemplate();
             textArea.value = defaultPrompt;
@@ -1174,14 +1191,14 @@ function loadDefaultPromptToPromptEditor() {
             // originalPrompt를 업데이트하여 변경사항으로 인식되도록
             promptEditorState.originalPrompt = appState.settings.customPrompt || '';
             
-            showSuccess('편집기가 기본 프롬프트로 초기화되었습니다. 저장 버튼을 눌러 적용하세요.');
+            showSuccess(getMessage('prompt.resetSuccess'));
             
             // 편집 상태 유지 - 모달을 닫지 않음
             // 사용자가 직접 저장하거나 취소할 수 있도록 함
         }
     } catch (error) {
         console.error('프롬프트 초기화 오류:', error);
-        showError('프롬프트 초기화 중 오류가 발생했습니다: ' + error.message);
+        showError(getMessage('prompt.resetError') + ': ' + error.message);
     }
 }
 
@@ -1190,7 +1207,7 @@ function savePromptFromEditor() {
     try {
         const textArea = document.getElementById('promptEditorText');
         if (!textArea) {
-            showError('프롬프트 편집기를 찾을 수 없습니다.');
+            showError(getMessage('prompt.notFound'));
             return;
         }
         
@@ -1199,19 +1216,19 @@ function savePromptFromEditor() {
         
         // 변경사항이 없으면 저장하지 않음
         if (!hasChanges) {
-            showSuccess('변경사항이 없습니다.');
+            showSuccess(getMessage('prompt.noChanges'));
             closePromptEditorWithoutConfirm();
             return;
         }
         
         // 빈 문자열로 저장하려는 경우 경고
         if (newPrompt === '') {
-            showError('프롬프트를 비울 수 없습니다. 기본 프롬프트를 사용하려면 "초기값으로" 버튼을 사용하세요.');
+            showError(getMessage('prompt.emptyNotAllowed'));
             return;
         }
         
         // 변경사항이 있으면 저장 확인
-        if (confirmAction('프롬프트를 저장하시겠습니까?')) {
+        if (confirmAction(getMessage('prompt.saveConfirm'))) {
             // 설정 업데이트
             const newSettings = {
                 ...appState.settings,
@@ -1221,7 +1238,7 @@ function savePromptFromEditor() {
             updateSettings(newSettings);
             promptEditorState.originalPrompt = newPrompt;
             
-            showSuccess('프롬프트가 저장되었습니다.');
+            showSuccess(getMessage('prompt.saved'));
             
             closePromptEditorWithoutConfirm();
             
@@ -1230,7 +1247,7 @@ function savePromptFromEditor() {
         }
     } catch (error) {
         console.error('프롬프트 저장 중 오류:', error);
-        showError('프롬프트 저장 중 오류가 발생했습니다.');
+        showError(getMessage('prompt.saveError'));
     }
 }
 

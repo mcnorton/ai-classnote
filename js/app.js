@@ -28,7 +28,7 @@ function initializeApp() {
     // 환영 메시지 표시 (첫 실행 시)
     if (appState.students.length === 0) {
         setTimeout(() => {
-            showToast('환영합니다! 학생을 추가하여 관찰 기록을 시작하세요.', 'success');
+            showToast(getMessage('welcome'), 'success');
         }, 1000);
     }
 }
@@ -164,12 +164,12 @@ window.restoreFromBackup = restoreFromBackup;
 // 에러 핸들링
 window.addEventListener('error', (event) => {
     console.error('전역 에러:', event.error);
-    showError('예상치 못한 오류가 발생했습니다. 페이지를 새로고침해주세요.');
+    showError(getMessage('network.unexpectedError'));
 });
 
 window.addEventListener('unhandledrejection', (event) => {
     console.error('처리되지 않은 Promise 거부:', event.reason);
-    showError('네트워크 오류가 발생했습니다. 인터넷 연결을 확인해주세요.');
+    showError(getMessage('network.networkError'));
 });
 
 // 서비스 워커 등록 (PWA 지원을 위해)
@@ -184,11 +184,11 @@ if ('serviceWorker' in navigator) {
 
 // 오프라인 감지
 window.addEventListener('online', () => {
-    showToast('인터넷 연결이 복구되었습니다.', 'success');
+    showToast(getMessage('network.online'), 'success');
 });
 
 window.addEventListener('offline', () => {
-    showToast('인터넷 연결이 끊어졌습니다. 일부 기능이 제한될 수 있습니다.', 'warning');
+    showToast(getMessage('network.offline'), 'warning');
 });
 
 // 페이지 가시성 변경 감지

@@ -33,7 +33,7 @@ function loadData() {
             console.log('데이터 로드 완료:', data);
         } catch (e) {
             console.error('데이터 로드 실패:', e);
-            showError('저장된 데이터를 불러오는데 실패했습니다.');
+            showError(getMessage('data.loadError'));
         }
     }
 }
@@ -45,14 +45,14 @@ function saveData() {
         console.log('데이터 저장 완료');
     } catch (e) {
         console.error('데이터 저장 실패:', e);
-        showError('데이터 저장에 실패했습니다.');
+        showError(getMessage('data.saveError'));
     }
 }
 
 // 학생 관리
 function addStudent(name) {
     if (isEmpty(name)) {
-        showError('학생 이름을 입력해주세요.');
+        showError(getMessage('student.nameRequired'));
         return null;
     }
     
@@ -76,7 +76,7 @@ function addStudent(name) {
     appState.viewMode = 'active';
     
     saveData();
-    showSuccess(`${newStudent.name} 학생이 추가되었습니다.`);
+    showSuccess(getMessage('student.added', { name: newStudent.name }));
     return newStudent;
 }
 
@@ -93,7 +93,7 @@ function performSoftDeleteStudent(id) {
         }
         
         saveData();
-        showSuccess(`${student.name} 학생이 삭제 목록으로 이동되었습니다.`);
+        showSuccess(getMessage('student.softDeleted', { name: student.name }));
         return true;
     }
     return false;
@@ -106,7 +106,7 @@ function performRestoreStudent(id) {
         appState.selectedStudentIds = [id];
         appState.viewMode = 'active';
         saveData();
-        showSuccess(`${student.name} 학생이 복원되었습니다.`);
+        showSuccess(getMessage('student.restored', { name: student.name }));
         return true;
     }
     return false;
@@ -126,7 +126,7 @@ function performPermanentDeleteStudent(id) {
         }
         
         saveData();
-        showSuccess(`${student.name} 학생이 영구 삭제되었습니다.`);
+        showSuccess(getMessage('student.permanentDeleted', { name: student.name }));
         return true;
     }
     return false;
@@ -135,7 +135,7 @@ function performPermanentDeleteStudent(id) {
 // 학생 이름 수정
 function updateStudentName(id, newName) {
     if (isEmpty(newName)) {
-        showError('학생 이름을 입력해주세요.');
+        showError(getMessage('student.nameRequired'));
         return false;
     }
     
@@ -144,7 +144,7 @@ function updateStudentName(id, newName) {
         const oldName = student.name;
         student.name = newName.trim();
         saveData();
-        showSuccess(`${oldName} 학생의 이름이 ${student.name}으로 변경되었습니다.`);
+        showSuccess(getMessage('student.nameChanged', { oldName, newName: student.name }));
         return true;
     }
     return false;
@@ -153,7 +153,7 @@ function updateStudentName(id, newName) {
 // 관찰 기록 관리
 function addObservationToData(text, date, studentIds) {
     if (isEmpty(text) || studentIds.length === 0) {
-        showError('관찰 내용과 대상 학생을 확인해주세요.');
+        showError(getMessage('observation.bothRequired'));
         return null;
     }
 
@@ -175,14 +175,14 @@ function addObservationToData(text, date, studentIds) {
     });
 
     saveData();
-    showSuccess('관찰 기록이 추가되었습니다.');
+    showSuccess(getMessage('observation.added'));
     return newObservation;
 }
 
 // 관찰 기록 수정
 function updateObservation(studentId, observationId, newText) {
     if (!appState.studentData[studentId]) {
-        showError('학생 데이터를 찾을 수 없습니다.');
+        showError(getMessage('observation.studentDataNotFound'));
         return false;
     }
     
@@ -190,18 +190,18 @@ function updateObservation(studentId, observationId, newText) {
     if (observation) {
         observation.text = newText.trim();
         saveData();
-        showSuccess('관찰 기록이 수정되었습니다.');
+        showSuccess(getMessage('observation.updated'));
         return true;
     }
     
-    showError('관찰 기록을 찾을 수 없습니다.');
+    showError(getMessage('observation.notFound'));
     return false;
 }
 
 // 관찰 기록 삭제
 function deleteObservation(studentId, observationId) {
     if (!appState.studentData[studentId]) {
-        showError('학생 데이터를 찾을 수 없습니다.');
+        showError(getMessage('observation.studentDataNotFound'));
         return false;
     }
     
@@ -211,11 +211,11 @@ function deleteObservation(studentId, observationId) {
     if (index !== -1) {
         observations.splice(index, 1);
         saveData();
-        showSuccess('관찰 기록이 삭제되었습니다.');
+        showSuccess(getMessage('observation.deleted'));
         return true;
     }
     
-    showError('관찰 기록을 찾을 수 없습니다.');
+    showError(getMessage('observation.notFound'));
     return false;
 }
 
@@ -234,7 +234,7 @@ function updateSummary(studentId, summary, timestamp) {
 function updateSettings(newSettings) {
     appState.settings = { ...appState.settings, ...newSettings };
     saveData();
-    showSuccess('설정이 저장되었습니다.');
+    showSuccess(getMessage('settings.saved'));
 }
 
 // 데이터 내보내기
@@ -255,10 +255,10 @@ function exportData() {
         const dataStr = JSON.stringify(exportDataObj, null, 2);
         const filename = `ai-classnote-data-${getCurrentDateTime()}.json`;
         downloadFile(dataStr, filename, 'application/json');
-        showSuccess('데이터가 내보내기되었습니다.');
+        showSuccess(getMessage('data.exportSuccess'));
     } catch (e) {
         console.error('데이터 내보내기 실패:', e);
-        showError('데이터 내보내기에 실패했습니다: ' + e.message);
+        showError(getMessage('data.exportError') + ': ' + e.message);
     }
 }
 
@@ -272,13 +272,28 @@ function importData(jsonData) {
         
         // 데이터 유효성 검사
         if (!importedData.students || !importedData.studentData || !importedData.settings) {
-            showError('유효하지 않은 데이터 형식입니다. 올바른 백업 파일인지 확인해주세요.');
+            showError(getMessage('data.importInvalidFormat'));
             return false;
+        }
+        
+        // 기존 데이터가 있는지 확인
+        const hasExistingData = appState.students.length > 0 || 
+                                Object.keys(appState.studentData).length > 0;
+        
+        // 기존 데이터가 있으면 덮어쓰기 확인
+        if (hasExistingData) {
+            const studentCount = appState.students.length;
+            const observationCount = Object.values(appState.studentData).reduce((total, data) => total + data.observations.length, 0);
+            
+            if (!confirmAction(getMessage('data.importConfirm', { studentCount, observationCount }))) {
+                showToast(getMessage('data.importCancelled'), 'info');
+                return false;
+            }
         }
         
         // 버전 호환성 확인
         if (importedData.version && importedData.version !== '3.0.0') {
-            if (!confirmAction(`이 데이터는 버전 ${importedData.version}에서 생성되었습니다. 현재 버전(3.0.0)과 호환되지 않을 수 있습니다. 계속하시겠습니까?`)) {
+            if (!confirmAction(getMessage('data.versionWarning', { version: importedData.version }))) {
                 return false;
             }
         }
@@ -306,11 +321,11 @@ function importData(jsonData) {
         };
         
         saveData();
-        showSuccess('데이터가 성공적으로 가져와졌습니다.');
+        showSuccess(getMessage('data.importSuccess'));
         return true;
     } catch (e) {
         console.error('데이터 가져오기 실패:', e);
-        showError('데이터 가져오기에 실패했습니다: ' + e.message);
+        showError(getMessage('data.importError') + ': ' + e.message);
     }
     return false;
 }
@@ -428,7 +443,7 @@ function getStatistics() {
 
 // 데이터 초기화
 function resetData() {
-    if (confirmAction('모든 데이터를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
+    if (confirmAction(getMessage('data.resetConfirm'))) {
         appState = {
             students: [],
             studentData: {},
@@ -447,7 +462,7 @@ function resetData() {
             }
         };
         saveData();
-        showSuccess('모든 데이터가 초기화되었습니다.');
+        showSuccess(getMessage('data.resetSuccess'));
     }
 }
 
@@ -466,7 +481,7 @@ function restoreFromBackup(backup) {
     if (backup && backup.students && backup.studentData && backup.settings) {
         appState = { ...appState, ...backup };
         saveData();
-        showSuccess('백업에서 복원되었습니다.');
+        showSuccess(getMessage('data.backupRestored'));
         return true;
     }
     return false;
