@@ -287,16 +287,45 @@ function renderObservationForm(primaryStudent, isDeletedStudentSelected) {
 
 // 관찰 기록 패널
 function renderObservationPanel(observations) {
+    const primaryStudent = getPrimaryStudent();
+    const studentId = primaryStudent ? primaryStudent.id : null;
+    
     return `
-        <div class="bg-white p-4 rounded-lg shadow-sm flex flex-col">
+        <div id="observationPanel" class="bg-white p-4 rounded-lg shadow-sm flex flex-col">
             <h3 class="text-lg font-semibold text-slate-800 mb-3 border-b pb-2">누가 기록</h3>
             <div class="flex-grow overflow-y-auto pr-2">
                 ${observations.length > 0 ? `
                     <ul class="space-y-4">
                         ${sortObservationsByDate(observations).map(obs => `
-                            <li class="p-3 bg-slate-50 rounded-md">
-                                <p class="text-sm text-slate-800">${obs.text}</p>
-                                <p class="text-xs text-slate-500 mt-2 text-right">${formatDate(obs.timestamp)}</p>
+                            <li class="p-3 bg-slate-50 rounded-md" id="obs-item-${obs.id}">
+                                <div class="flex items-start gap-2">
+                                    <input 
+                                        type="text" 
+                                        id="obs-text-${obs.id}" 
+                                        value="${obs.text.replace(/"/g, '&quot;')}" 
+                                        readonly
+                                        class="flex-grow text-sm text-slate-800 bg-transparent border-none outline-none px-0 cursor-default focus:cursor-text focus:bg-white focus:border focus:border-blue-500 focus:rounded focus:px-2 focus:py-1"
+                                    />
+                                </div>
+                                <div class="flex items-center justify-between mt-2">
+                                    <p class="text-xs text-slate-500">${formatDate(obs.timestamp)}</p>
+                                    <div class="flex items-center gap-2" id="obs-actions-${obs.id}">
+                                        <button 
+                                            onclick="startEditObservation('${studentId}', '${obs.id}')" 
+                                            class="text-blue-500 hover:text-blue-700 text-xs px-2 py-1 rounded hover:bg-blue-50 transition-colors"
+                                            title="수정"
+                                        >
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button 
+                                            onclick="deleteObservationEvent('${studentId}', '${obs.id}')" 
+                                            class="text-red-500 hover:text-red-700 text-xs px-2 py-1 rounded hover:bg-red-50 transition-colors"
+                                            title="삭제"
+                                        >
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </div>
+                                </div>
                             </li>
                         `).join('')}
                     </ul>

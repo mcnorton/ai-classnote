@@ -179,6 +179,46 @@ function addObservationToData(text, date, studentIds) {
     return newObservation;
 }
 
+// 관찰 기록 수정
+function updateObservation(studentId, observationId, newText) {
+    if (!appState.studentData[studentId]) {
+        showError('학생 데이터를 찾을 수 없습니다.');
+        return false;
+    }
+    
+    const observation = appState.studentData[studentId].observations.find(obs => obs.id === observationId);
+    if (observation) {
+        observation.text = newText.trim();
+        saveData();
+        showSuccess('관찰 기록이 수정되었습니다.');
+        return true;
+    }
+    
+    showError('관찰 기록을 찾을 수 없습니다.');
+    return false;
+}
+
+// 관찰 기록 삭제
+function deleteObservation(studentId, observationId) {
+    if (!appState.studentData[studentId]) {
+        showError('학생 데이터를 찾을 수 없습니다.');
+        return false;
+    }
+    
+    const observations = appState.studentData[studentId].observations;
+    const index = observations.findIndex(obs => obs.id === observationId);
+    
+    if (index !== -1) {
+        observations.splice(index, 1);
+        saveData();
+        showSuccess('관찰 기록이 삭제되었습니다.');
+        return true;
+    }
+    
+    showError('관찰 기록을 찾을 수 없습니다.');
+    return false;
+}
+
 // 요약 관리
 function updateSummary(studentId, summary, timestamp) {
     if (!appState.studentData[studentId]) {

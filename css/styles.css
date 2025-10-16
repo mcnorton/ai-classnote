@@ -212,6 +212,29 @@ body {
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
+/* 관찰 기록 수정 스타일 */
+#observationPanel input[type="text"][readonly] {
+    cursor: default;
+    transition: all 0.2s ease-in-out;
+}
+
+#observationPanel input[type="text"][readonly]:hover {
+    background-color: rgba(59, 130, 246, 0.02);
+}
+
+#observationPanel input[type="text"]:not([readonly]) {
+    cursor: text;
+    background-color: white;
+    border: 1px solid #3b82f6 !important;
+    padding: 4px 8px !important;
+    border-radius: 4px;
+}
+
+#observationPanel input[type="text"]:not([readonly]):focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
 /* readonly input 스타일 - 일반 텍스트처럼 보이게 */
 input[type="text"][readonly] {
     cursor: pointer;

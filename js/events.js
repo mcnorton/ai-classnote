@@ -201,6 +201,84 @@ function handleAddObservation() {
     }
 }
 
+// 관찰 기록 수정 시작
+function startEditObservation(studentId, observationId) {
+    try {
+        const inputEl = document.getElementById(`obs-text-${observationId}`);
+        const actionsEl = document.getElementById(`obs-actions-${observationId}`);
+        
+        if (!inputEl || !actionsEl) {
+            showError('관찰 기록을 찾을 수 없습니다.');
+            return;
+        }
+        
+        // readonly 속성 제거하여 편집 가능하게
+        inputEl.readOnly = false;
+        inputEl.focus();
+        inputEl.select();
+        
+        // 버튼을 [저장] 버튼으로 변경
+        actionsEl.innerHTML = `
+            <button 
+                onclick="saveEditObservation('${studentId}', '${observationId}')" 
+                class="text-green-600 hover:text-green-800 text-xs px-3 py-1 rounded bg-green-50 hover:bg-green-100 transition-colors font-medium"
+                title="저장"
+            >
+                <i class="fas fa-save mr-1"></i>저장
+            </button>
+        `;
+    } catch (error) {
+        console.error('관찰 기록 수정 시작 중 오류:', error);
+        showError('관찰 기록 수정 시작 중 오류가 발생했습니다.');
+    }
+}
+
+// 관찰 기록 수정 저장
+function saveEditObservation(studentId, observationId) {
+    try {
+        const inputEl = document.getElementById(`obs-text-${observationId}`);
+        
+        if (!inputEl) {
+            showError('관찰 기록을 찾을 수 없습니다.');
+            return;
+        }
+        
+        const newText = inputEl.value.trim();
+        
+        if (isEmpty(newText)) {
+            showError('관찰 내용은 비어있을 수 없습니다.');
+            return;
+        }
+        
+        // data.js의 updateObservation 함수 호출
+        updateObservation(studentId, observationId, newText);
+        
+        // 앱 전체 재렌더링
+        renderApp();
+    } catch (error) {
+        console.error('관찰 기록 저장 중 오류:', error);
+        showError('관찰 기록 저장 중 오류가 발생했습니다.');
+    }
+}
+
+// 관찰 기록 삭제
+function deleteObservationEvent(studentId, observationId) {
+    try {
+        if (!confirmAction('이 관찰 기록을 삭제하시겠습니까?\n삭제된 기록은 복구할 수 없습니다.')) {
+            return;
+        }
+        
+        // data.js의 deleteObservation 함수 호출
+        deleteObservation(studentId, observationId);
+        
+        // 앱 전체 재렌더링
+        renderApp();
+    } catch (error) {
+        console.error('관찰 기록 삭제 중 오류:', error);
+        showError('관찰 기록 삭제 중 오류가 발생했습니다.');
+    }
+}
+
 // AI 요약 이벤트
 async function generateSummaryEvent() {
     try {
