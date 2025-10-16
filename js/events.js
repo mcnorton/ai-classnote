@@ -279,7 +279,7 @@ function deleteObservationEvent(studentId, observationId) {
     }
 }
 
-// AI 요약 이벤트
+// AI 요약 이벤트 (클라이언트 로컬 시각 기준)
 async function generateSummaryEvent() {
     try {
         const primaryStudent = getPrimaryStudent();
@@ -298,6 +298,7 @@ async function generateSummaryEvent() {
         renderApp();
         
         const result = await generateSummary(primaryStudent.name, studentObservations);
+        // 클라이언트 로컬 시각 기준으로 타임스탬프 생성
         const generationTimestamp = new Date().toISOString();
         updateSummary(primaryStudent.id, result, generationTimestamp);
         recordApiCall();

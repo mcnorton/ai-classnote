@@ -150,13 +150,14 @@ function updateStudentName(id, newName) {
     return false;
 }
 
-// 관찰 기록 관리
+// 관찰 기록 관리 (클라이언트 로컬 시각 기준)
 function addObservationToData(text, date, studentIds) {
     if (isEmpty(text) || studentIds.length === 0) {
         showError(getMessage('observation.bothRequired'));
         return null;
     }
 
+    // 클라이언트 로컬 시각 기준으로 타임스탬프 생성
     const now = new Date();
     const [year, month, day] = date.split('-').map(Number);
     const observationTimestamp = new Date(year, month - 1, day, now.getHours(), now.getMinutes(), now.getSeconds());
@@ -164,7 +165,7 @@ function addObservationToData(text, date, studentIds) {
     const newObservation = {
         id: generateId(),
         text: text.trim(),
-        timestamp: observationTimestamp.toISOString(),
+        timestamp: observationTimestamp.toISOString(), // ISO 형식으로 저장 (표시 시 로컬 시각으로 변환)
     };
 
     studentIds.forEach(studentId => {
@@ -237,13 +238,14 @@ function updateSettings(newSettings) {
     showSuccess(getMessage('settings.saved'));
 }
 
-// 데이터 내보내기
+// 데이터 내보내기 (클라이언트 로컬 시각 기준)
 function exportData() {
     try {
         // 백업 데이터 생성 (사용자 프롬프트 포함)
+        // 내보내기 시각은 클라이언트 로컬 시각 기준
         const exportDataObj = {
             ...appState,
-            exportDate: new Date().toISOString(),
+            exportDate: new Date().toISOString(), // ISO 형식으로 저장
             version: '3.0.0',
             appInfo: {
                 name: 'AI ClassNote',
@@ -466,11 +468,11 @@ function resetData() {
     }
 }
 
-// 데이터 백업 생성
+// 데이터 백업 생성 (클라이언트 로컬 시각 기준)
 function createBackup() {
     const backup = {
         ...appState,
-        backupDate: new Date().toISOString(),
+        backupDate: new Date().toISOString(), // 클라이언트 로컬 시각 기준 ISO 형식
         version: '3.0'
     };
     return backup;

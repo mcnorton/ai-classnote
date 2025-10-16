@@ -210,9 +210,12 @@ async function checkApiUsage() {
     };
 }
 
-// API 호출 기록 저장
+// API 호출 기록 저장 (클라이언트 로컬 시각 기준)
 function recordApiCall() {
-    sessionStorage.setItem('last_api_call', new Date().toLocaleString('ko-KR'));
+    const timestamp = new Date().toLocaleString('ko-KR', {
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+    });
+    sessionStorage.setItem('last_api_call', timestamp);
 }
 
 // API 키 유효성 검사

@@ -11,9 +11,11 @@ function parseMarkdown(text) {
         .replace(/\n/g, '<br>');
 }
 
-// 날짜 포맷팅
+// 날짜 포맷팅 (클라이언트 로컬 시각 기준)
 function formatDate(dateString) {
-    return new Date(dateString).toLocaleString('ko-KR');
+    return new Date(dateString).toLocaleString('ko-KR', {
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+    });
 }
 
 function formatDateShort(dateString) {
@@ -21,7 +23,8 @@ function formatDateShort(dateString) {
         month: 'short', 
         day: 'numeric', 
         hour: '2-digit', 
-        minute: '2-digit' 
+        minute: '2-digit',
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
     });
 }
 
@@ -100,12 +103,16 @@ function showToast(message, type = 'info') {
     }, 3000);
 }
 
-// 현재 날짜를 YYYY-MM-DD 형식으로 반환
+// 현재 날짜를 YYYY-MM-DD 형식으로 반환 (클라이언트 로컬 시각 기준)
 function getCurrentDate() {
-    return new Date().toISOString().split('T')[0];
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
 }
 
-// 현재 날짜와 시간을 YYYY-MM-DD-HHMM 형식으로 반환 (24시간제)
+// 현재 날짜와 시간을 YYYY-MM-DD-HHMM 형식으로 반환 (클라이언트 로컬 시각 기준, 24시간제)
 function getCurrentDateTime() {
     const now = new Date();
     const year = now.getFullYear();
@@ -131,9 +138,9 @@ function deepClone(obj) {
     return JSON.parse(JSON.stringify(obj));
 }
 
-// 로컬 스토리지 키 생성
+// 로컬 스토리지 키 생성 (클라이언트 로컬 시각 기준)
 function createStorageKey(prefix, suffix = '') {
-    const timestamp = new Date().toISOString().split('T')[0];
+    const timestamp = getCurrentDate();
     return `${prefix}-${timestamp}${suffix ? '-' + suffix : ''}`;
 }
 

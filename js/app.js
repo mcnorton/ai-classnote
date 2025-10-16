@@ -253,13 +253,13 @@ if (isDevelopment) {
     };
 }
 
-// 애플리케이션 정보
+// 애플리케이션 정보 (빌드 시각은 클라이언트 로컬 시각 기준)
 const APP_INFO = {
     name: 'AI ClassNote',
     version: '3.3.0',
     description: '교실에서 학생들의 교과평가와 학교생활을 관찰기록하고, AI를 활용해 분석하는 도구',
     author: 'AI Assistant',
-    buildDate: new Date().toISOString()
+    buildDate: new Date().toISOString() // 클라이언트 로컬 시각 기준
 };
 
 // 앱 정보를 전역으로 노출
