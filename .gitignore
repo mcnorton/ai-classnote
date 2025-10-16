@@ -1,0 +1,38 @@
+# 에디터 설정
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS 파일
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 로그 파일
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# API 키 (실수로 커밋되지 않도록)
+**/api-keys.txt
+**/*.env
+.env
+
+# 백업 파일
+*.backup
+*.bak
+*.old
+
+# 테스트 데이터
+test-data/
+local-test/
+
+# 빌드 출력 (나중에 필요할 경우를 대비)
+dist/
+build/
+
+# 개발용문서
+docs/

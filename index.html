@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ko" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="교실에서 학생들의 교과평가와 학교생활을 관찰기록하고, AI를 활용해 분석하는 도구">
+    <meta name="keywords" content="교실관찰, 학생평가, AI분석, 누가기록, 교육도구">
+    <meta name="author" content="AI Assistant">
+    
+    <title>AI ClassNote (AI 클래스노트)</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E👨‍🏫%3C/text%3E%3C/svg%3E">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#3b82f6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="AI ClassNote">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="AI ClassNote (AI 클래스노트)">
+    <meta property="og:description" content="교실에서 학생들의 교과평가와 학교생활을 관찰기록하고, AI를 활용해 분석하는 도구">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="AI ClassNote (AI 클래스노트)">
+    <meta name="twitter:description" content="교실에서 학생들의 교과평가와 학교생활을 관찰기록하고, AI를 활용해 분석하는 도구">
+    
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data:; connect-src 'self' https://generativelanguage.googleapis.com;">
+    
+    <!-- Preload Critical Resources -->
+    <link rel="preload" href="css/styles.css" as="style">
+    <link rel="preload" href="js/utils.js" as="script">
+    <link rel="preload" href="js/data.js" as="script">
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "AI ClassNote (AI 클래스노트)",
+        "description": "교실에서 학생들의 교과평가와 학교생활을 관찰기록하고, AI를 활용해 분석하는 도구",
+        "url": "",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Web Browser",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "KRW"
+        },
+        "creator": {
+            "@type": "Organization",
+            "name": "AI Assistant"
+        }
+    }
+    </script>
+    
+    <style type="text/tailwindcss">
+        /*
+          Tailwind JIT Customizations for Prose:
+          AI 요약에 사용되는 마크다운 콘텐츠의 스타일을 Tailwind 유틸리티를 사용하여 재정의합니다.
+          이 방식은 CSS 파일을 분리하지 않고 Tailwind의 디자인 시스템 내에서 스타일을 관리합니다.
+        */
+        .prose h1 {
+          @apply text-[1.75rem] font-bold text-slate-800 mt-0 mb-4 pb-2 border-b-2 border-slate-200;
+        }
+        .prose h2 {
+          @apply text-[1.4rem] font-bold text-blue-700 mt-8 mb-4 pb-2 border-b-2 border-blue-300;
+        }
+        .prose h3 {
+          @apply text-[1.15rem] font-semibold text-blue-800 mt-6 mb-3 pl-3 border-l-4 border-blue-400;
+        }
+        .prose h4 {
+          @apply text-base font-bold text-slate-800 mt-6 mb-3;
+        }
+        .prose strong {
+            @apply !text-slate-900 font-semibold; /* prose 기본 스타일을 확실히 재정의하기 위해 !important 사용 */
+        }
+        .prose ul, .prose ol {
+            @apply mt-4 mb-4 pl-0;
+        }
+        .prose li {
+            @apply mt-2 mb-2 relative pl-7;
+            list-style: none; /* 커스텀 리스트 아이콘을 위해 기본 스타일 제거 */
+        }
+        
+        /* 목록 아이템 앞에 커스텀 아이콘 추가 (pseudo-elements는 순수 CSS 속성 사용) */
+        .prose ul > li::before {
+            content: '';
+            position: absolute;
+            left: 0.5rem;
+            top: 0.5em; /* 위치 미세 조정 */
+            width: 6px;
+            height: 6px;
+            background-color: #3b82f6; /* Tailwind blue-600 */
+            border-radius: 9999px; /* Tailwind rounded-full */
+        }
+        .prose ol {
+            counter-reset: list-counter;
+        }
+        .prose ol > li {
+            counter-increment: list-counter;
+        }
+        /* 순서 있는 목록 스타일 */
+        .prose ol > li::before {
+            content: counter(list-counter) ".";
+            position: absolute;
+            left: 0.5rem;
+            font-weight: 600; /* Tailwind font-semibold */
+            color: #3b82f6; /* Tailwind blue-600 */
+        }
+    </style>
+</head>
+<body class="h-full bg-slate-100">
+    <!-- 앱 컨테이너 -->
+    <div id="app" class="h-full flex flex-col bg-slate-50 font-sans">
+        <!-- 앱 내용이 여기에 동적으로 로드됩니다 -->
+    </div>
+    
+    <!-- 로딩 오버레이 -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-white bg-opacity-90 flex items-center justify-center z-50" style="display: none;">
+        <div class="text-center">
+            <div class="loading-spinner mb-4"></div>
+            <p class="text-slate-600">로딩 중...</p>
+        </div>
+    </div>
+    
+    <!-- 오프라인 알림 -->
+    <div id="offlineNotification" class="fixed top-4 left-4 bg-yellow-500 text-white px-4 py-2 rounded-md shadow-lg z-50" style="display: none;">
+        <i class="fas fa-wifi mr-2"></i>
+        인터넷 연결이 끊어졌습니다.
+    </div>
+    
+    <!-- JavaScript 모듈들 (순서 중요) -->
+    <script src="js/utils.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/events.js"></script>
+    <script src="js/app.js"></script>
+    
+    <!-- 개발자 도구 (개발 모드에서만) -->
+    <script>
+        // 개발 모드 확인
+        const isDev = window.location.hostname === 'localhost' || 
+                     window.location.hostname === '127.0.0.1' ||
+                     window.location.protocol === 'file:';
+        
+        if (isDev) {
+            console.log('🔧 개발 모드 활성화');
+            console.log('사용 가능한 개발자 명령어:');
+            console.log('- devMode.clearAllData(): 모든 데이터 삭제');
+            console.log('- devMode.exportDebugInfo(): 디버그 정보 내보내기');
+            console.log('- devMode.testApiKey(key): API 키 테스트');
+            console.log('- getAppState(): 현재 앱 상태 확인');
+            console.log('- getStatistics(): 통계 정보 확인');
+        }
+        
+        // 오프라인 감지
+        window.addEventListener('online', () => {
+            const notification = document.getElementById('offlineNotification');
+            if (notification) {
+                notification.style.display = 'none';
+            }
+        });
+        
+        window.addEventListener('offline', () => {
+            const notification = document.getElementById('offlineNotification');
+            if (notification) {
+                notification.style.display = 'block';
+            }
+        });
+        
+        // 초기 오프라인 상태 확인
+        if (!navigator.onLine) {
+            const notification = document.getElementById('offlineNotification');
+            if (notification) {
+                notification.style.display = 'block';
+            }
+        }
+        
+        // 로딩 오버레이 제어
+        window.addEventListener('load', () => {
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) {
+                overlay.style.display = 'none';
+            }
+        });
+        
+        // 에러 처리
+        window.addEventListener('error', (event) => {
+            console.error('전역 에러:', event.error);
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) {
+                overlay.style.display = 'none';
+            }
+        });
+        
+        // Service Worker 등록 (PWA 지원)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                // 서비스 워커 파일이 있다면 등록
+                // navigator.serviceWorker.register('/sw.js')
+                //     .then(registration => {
+                //         console.log('SW 등록 성공:', registration);
+                //     })
+                //     .catch(registrationError => {
+                //         console.log('SW 등록 실패:', registrationError);
+                //     });
+            });
+        }
+        
+        // 키보드 단축키 도움말
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'F1' || (e.ctrlKey && e.key === '/')) {
+                e.preventDefault();
+                alert(`키보드 단축키:
+Ctrl/Cmd + S: 설정 열기
+Ctrl/Cmd + N: 새 학생 추가
+Ctrl/Cmd + E: 데이터 내보내기
+Ctrl/Cmd + G: AI 요약 생성
+F2: 선택된 학생 이름 수정
+Escape: 모달 닫기
+F1 또는 Ctrl + /: 이 도움말`);
+            }
+        });
+        
+        // 페이지 가시성 변경 시 데이터 저장
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden && typeof saveData === 'function') {
+                saveData();
+            }
+        });
+        
+        // 브라우저 뒤로가기/앞으로가기 처리
+        window.addEventListener('popstate', (event) => {
+            // 필요시 히스토리 상태 복원 로직 구현
+        });
+        
+        // 앱 정보 표시
+        console.log('🚀 AI ClassNote (AI 클래스노트) v3.0.0');
+        console.log('📚 교실에서 학생들의 교과평가와 학교생활을 관찰기록하고, AI를 활용해 분석하는 도구');
+        console.log('🔒 로컬 실행으로 데이터 보안 강화');
+        console.log('🤖 Google Gemini AI를 활용한 지능형 분석');
+    </script>
+    
+    <!-- Google Analytics (선택사항) -->
+    <!--
+    <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'GA_MEASUREMENT_ID');
+    </script>
+    -->
+</body>
+</html>
