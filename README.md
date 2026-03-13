@@ -577,9 +577,9 @@ git clone https://github.com/YOUR_USERNAME/ai-classnote.git
 
 ## 📧 연락처
 
-프로젝트 관리자 - [@YOUR_USERNAME](https://github.com/YOUR_USERNAME)
+프로젝트 관리자 - [@맥노턴](https://github.com/mcnorton)
 
-프로젝트 링크: [https://github.com/YOUR_USERNAME/ai-classnote](https://github.com/YOUR_USERNAME/ai-classnote)
+프로젝트 링크: [https://mcnorton.github.io/ai-classnote](https://mcnorton.github.io/ai-classnote)
 
 ---
 
